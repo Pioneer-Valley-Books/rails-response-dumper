@@ -44,6 +44,8 @@ run in a transaction that always rollsback at the end.
 
 ## `ResponseDumper::reset_models`
 
+*NOTE: This feature is only supported on PostgreSQL.*
+
 The class method `ResponseDumper::reset_models` can be used to reset database
 sequences between runs. If a model ID value is included in the dump and it is
 important that this value is reproducible on each run, use this method.
