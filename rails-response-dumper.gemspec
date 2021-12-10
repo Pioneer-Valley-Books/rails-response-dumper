@@ -6,6 +6,11 @@ Gem::Specification.new do |spec|
   spec.licenses = ['MIT']
   spec.summary = 'Dump HTTP responses from a Rails application to the file system'
   spec.authors = ['Pioneer Valley Books']
+  spec.description = <<~DESC
+    Rails Response Dumper is a library and command line tool to dump HTTP
+    responses from a Rails application to the file system. These responses can
+    then be consumed by other tools for testing and verification purposes.
+  DESC
 
   spec.executables = ['rails-response-dumper']
 
