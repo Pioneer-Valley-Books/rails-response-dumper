@@ -54,12 +54,12 @@ def run_dumps
     dumper_dir = "#{dumps_dir}/#{klass_path}"
     FileUtils.mkdir_p dumper_dir
 
-    dumper = klass.new
-    dumper.methods.each do |method|
+    klass.instance_methods.each do |method|
       next unless method.start_with?('dump_')
 
       klass.reset_models!
 
+      dumper = klass.new
       ActiveRecord::Base.transaction do
         dumper.expect_status_code!(:ok)
         dumper.send(method)
