@@ -40,6 +40,20 @@ class ResponseDumper
   def expect_status_code!(status_code)
     @expected_status_code = Rack::Utils::SYMBOL_TO_STATUS_CODE[status_code]
   end
+
+  def responses
+    @responses ||= []
+  end
+
+  [:get, :post, :patch, :put, :head, :delete].each do |method|
+    module_eval <<~RUBY, __FILE__, __LINE__ + 1
+      def #{method}(...)
+        result = super
+        self.responses << response
+        result
+      end
+    RUBY
+  end
 end
 
 def run_dumps
@@ -50,10 +64,6 @@ def run_dumps
   Dir[Rails.root.join('dumpers/**/*.rb')].each { |f| require f }
 
   ResponseDumper.dumpers.each do |klass|
-    klass_path = klass.name.underscore
-    dumper_dir = "#{dumps_dir}/#{klass_path}"
-    FileUtils.mkdir_p dumper_dir
-
     klass.instance_methods.each do |method|
       next unless method.start_with?('dump_')
 
@@ -66,18 +76,22 @@ def run_dumps
         raise ActiveRecord::Rollback
       end
 
-      response = dumper.response
+      klass_path = klass.name.underscore
+      dumper_dir = "#{dumps_dir}/#{klass_path}/#{method}"
+      FileUtils.mkdir_p dumper_dir
 
-      unless response.status == dumper.expected_status_code
-        raise <<~ERROR.squish
-          Dumped response has unexpected status code #{response.status} #{response.status_message}
-          (expected #{dumper.expected_status_code})
-        ERROR
+      dumper.responses.each_with_index do |response, index|
+        unless response.status == dumper.expected_status_code
+          raise <<~ERROR.squish
+            Dumped response has unexpected status code #{response.status} #{response.status_message}
+            (expected #{dumper.expected_status_code})
+          ERROR
+        end
+
+        mime = response.content_type.split(/ *; */).first
+        extension = MIME::Types[mime].first.preferred_extension
+        File.write("#{dumper_dir}/#{index}.#{extension}", response.body)
       end
-
-      mime = response.content_type.split(/ *; */).first
-      extension = MIME::Types[mime].first.preferred_extension
-      File.write("#{dumper_dir}/#{method}.#{extension}", response.body)
     end
   end
 end
