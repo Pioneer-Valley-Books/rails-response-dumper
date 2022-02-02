@@ -54,6 +54,12 @@ class ResponseDumper
       end
     RUBY
   end
+
+  # The list of methods is too long to be useful so shorten to just the class
+  # name.
+  def inspect
+    "#<#{self.class.name}>"
+  end
 end
 
 def run_dumps

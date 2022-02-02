@@ -1,3 +1,8 @@
+## UNRELEASED
+
+- Override `ResponseDumper#inspect` to just the class name without listing its
+  methods.
+
 ## 2.0.0 (2022-02-03)
 
 - Add compatibility for Rails 7.
