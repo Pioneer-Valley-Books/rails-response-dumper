@@ -35,7 +35,8 @@ $ rails-response-dumper
 $ tree dumps
 dumps
 └── users_response_dumper
-    └── dump_index.html
+    └── dump_index
+        └── 0.html
 ```
 
 Just like tests, the dump methods can include setup code to add records to the
