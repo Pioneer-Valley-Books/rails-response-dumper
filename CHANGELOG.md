@@ -1,4 +1,6 @@
-## UNRELEASED
+## 2.0.0 (2022-02-02)
+
+- Add compatibility for Rails 7.
 
 - Allow dumping multiple responses per `dump_*` method. Each additional call to
   `get` or `post` will dump another file. The directory structure is now:
