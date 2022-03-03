@@ -1,13 +1,10 @@
-## UNRELEASED
+## 2.1.0 (2022-03-03)
 
 - Override `ResponseDumper#inspect` to just the class name without listing its
   methods.
 
-## 2.1.0 (2022-03-03)
-
-- Add RSpec Mocks
-
-  Prevent mocks leaking into another methods, teardown after each dump.
+- Add rspec-mocks as a dependency. The `ResponseDumper` class now includes
+  `RSpec::Mocks::ExampleMethods`.
 
 ## 2.0.0 (2022-02-03)
 
