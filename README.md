@@ -83,7 +83,7 @@ end
 3. Publish the gem:
 
    ```console
-   $ docker run --rm -it -v $(pwd):$(pwd) -w $(pwd) ruby gem publish rails-response-dumper-X.Y.Z.gem
+   $ docker run --rm -it -v $(pwd):$(pwd) -w $(pwd) ruby gem push rails-response-dumper-X.Y.Z.gem
    ```
 
 4. Create and publish a git tag:
