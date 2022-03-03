@@ -3,6 +3,12 @@
 - Override `ResponseDumper#inspect` to just the class name without listing its
   methods.
 
+## 2.1.0 (2022-03-03)
+
+- Add RSpec Mocks
+
+  Prevent mocks leaking into another methods, teardown after each dump.
+
 ## 2.0.0 (2022-02-03)
 
 - Add compatibility for Rails 7.
