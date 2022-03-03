@@ -3,12 +3,14 @@
 
 require 'fileutils'
 require 'mime/types'
+require 'rspec/mocks'
 
 ENV['RAILS_ENV'] ||= 'test'
 require "#{Dir.pwd}/config/environment"
 
 class ResponseDumper
   include ActionDispatch::Integration::Runner
+  include RSpec::Mocks::ExampleMethods
 
   attr_reader :expected_status_code
 
@@ -45,6 +47,16 @@ class ResponseDumper
     @responses ||= []
   end
 
+  def mock_setup
+    RSpec::Mocks.setup
+  end
+
+  def mock_teardown
+    RSpec::Mocks.verify
+  ensure
+    RSpec::Mocks.teardown
+  end
+
   [:get, :post, :patch, :put, :head, :delete].each do |method|
     module_eval <<~RUBY, __FILE__, __LINE__ + 1
       def #{method}(...)
@@ -76,10 +88,15 @@ def run_dumps
       klass.reset_models!
 
       dumper = klass.new
-      ActiveRecord::Base.transaction do
-        dumper.expect_status_code!(:ok)
-        dumper.send(method)
-        raise ActiveRecord::Rollback
+      dumper.mock_setup
+      begin
+        ActiveRecord::Base.transaction do
+          dumper.expect_status_code!(:ok)
+          dumper.send(method)
+          raise ActiveRecord::Rollback
+        end
+      ensure
+        dumper.mock_teardown
       end
 
       klass_path = klass.name.underscore
