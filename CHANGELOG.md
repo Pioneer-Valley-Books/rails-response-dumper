@@ -1,3 +1,8 @@
+## UNRELEASED
+
+- `ResponseDumper` class now includes `ActiveSupport::Testing::TimeHelpers` to
+  provide methods `freeze_time`, `travel`, and `travel_to`.
+
 ## 2.1.0 (2022-03-03)
 
 - Override `ResponseDumper#inspect` to just the class name without listing its
