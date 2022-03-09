@@ -10,6 +10,7 @@ require "#{Dir.pwd}/config/environment"
 
 class ResponseDumper
   include ActionDispatch::Integration::Runner
+  include ActiveSupport::Testing::TimeHelpers
   include RSpec::Mocks::ExampleMethods
 
   attr_reader :expected_status_code
