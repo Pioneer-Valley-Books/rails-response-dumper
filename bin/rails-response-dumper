@@ -107,7 +107,8 @@ def run_dumps
       dumper.responses.each_with_index do |response, index|
         unless response.status == dumper.expected_status_code
           raise <<~ERROR.squish
-            Dumped response has unexpected status code #{response.status} #{response.status_message}
+            #{dumper.class.name}\##{method} has unexpected status
+            code #{response.status} #{response.status_message}
             (expected #{dumper.expected_status_code})
           ERROR
         end
