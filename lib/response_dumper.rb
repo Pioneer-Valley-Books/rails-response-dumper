@@ -9,24 +9,8 @@ class ResponseDumper
 
   attr_reader :expected_status_code
 
-  def self.inherited(subclass)
-    super
-    dumpers << subclass
-  end
-
-  def self.dumpers
-    @dumpers ||= []
-  end
-
-  def self.reset_models(*models)
-    @reset_models ||= []
-    @reset_models += models
-  end
-
-  def self.reset_models!
-    reset_models.each do |model|
-      model.connection.exec_query "TRUNCATE #{model.quoted_table_name} RESTART IDENTITY CASCADE"
-    end
+  def self.define(name, &block)
+    RailsResponseDumper::Defined.new(name, &block)
   end
 
   # Delegates to `Rails.application`.

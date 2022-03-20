@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative 'defined'
+
 module RailsResponseDumper
   class Runner
     def run_dumps
@@ -9,26 +11,24 @@ module RailsResponseDumper
 
       Dir[Rails.root.join('dumpers/**/*.rb')].each { |f| require f }
 
-      ResponseDumper.dumpers.each do |klass|
-        klass.instance_methods.each do |method|
-          next unless method.start_with?('dump_')
+      RailsResponseDumper::Defined.dumpers.each do |defined|
+        defined.blocks.each do |dump_name, block|
+          defined.reset_models!
 
-          klass.reset_models!
-
-          dumper = klass.new
+          dumper = defined.klass.new
           dumper.mock_setup
           begin
             ActiveRecord::Base.transaction do
               dumper.expect_status_code!(:ok)
-              dumper.send(method)
+              dumper.instance_eval(&block)
               raise ActiveRecord::Rollback
             end
           ensure
             dumper.mock_teardown
           end
 
-          klass_path = klass.name.underscore
-          dumper_dir = "#{dumps_dir}/#{klass_path}/#{method}"
+          klass_path = defined.name.underscore
+          dumper_dir = "#{dumps_dir}/#{klass_path}/#{dump_name}"
           FileUtils.mkdir_p dumper_dir
 
           dumper.responses.each_with_index do |response, index|
