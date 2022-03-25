@@ -25,6 +25,8 @@
 - `ResponseDumper` class now includes `ActiveSupport::Testing::TimeHelpers` to
   provide methods `freeze_time`, `travel`, and `travel_to`.
 
+- On status code failure, the error now reports the dumper class and method.
+
 ## 2.1.0 (2022-03-03)
 
 - Override `ResponseDumper#inspect` to just the class name without listing its
