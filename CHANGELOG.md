@@ -1,5 +1,27 @@
 ## UNRELEASED
 
+- New DSL. Library users should no longer define child classes of
+  `ResponseDumper`. Instead, use `ResponseDumper.define`. Inside the block, use
+  the `dump` method. For example:
+
+  ```ruby
+  ResponseDumper.define 'Users' do
+    dump 'index' do
+      get users_index_path
+    end
+  end
+  ```
+
+- The output file structure has changed. Directories no longer contain the
+  `dump_` prefix from methods. For the example above, the output is now:
+
+  ```
+  dumps
+  └── users
+      └── index
+          └── 0.html
+  ```
+
 - `ResponseDumper` class now includes `ActiveSupport::Testing::TimeHelpers` to
   provide methods `freeze_time`, `travel`, and `travel_to`.
 

@@ -20,8 +20,8 @@ methods are available.
 ```ruby
 # dumpers/users_response_dumper.rb
 
-class UsersResponseDumper < ResponseDumper
-  def dump_index
+ResponseDumper.define 'Users' do
+  dump 'index' do
     get users_index_path
   end
 end
@@ -34,8 +34,8 @@ and fill it with dump files.
 $ rails-response-dumper
 $ tree dumps
 dumps
-└── users_response_dumper
-    └── dump_index
+└── users
+    └── index
         └── 0.html
 ```
 
@@ -43,22 +43,22 @@ Just like tests, the dump methods can include setup code to add records to the
 database or include other side effects to build a more interesting dump. Dumps
 run in a transaction that always rollsback at the end.
 
-## `ResponseDumper::reset_models`
+## `reset_models`
 
 *NOTE: This feature is only supported on PostgreSQL.*
 
-The class method `ResponseDumper::reset_models` can be used to reset database
-sequences between runs. If a model ID value is included in the dump and it is
-important that this value is reproducible on each run, use this method.
+The method `reset_models` can be used to reset database sequences between runs.
+If a model ID value is included in the dump and it is important that this value
+is reproducible on each run, use this method.
 
 
 ```ruby
 # dumpers/users_response_dumper.rb
 
-class UsersResponseDumper < ResponseDumper
+ResponseDumper.define 'Users' do
   reset_models User
 
-  def dump_index
+  dump 'index' do
     User.create!(name: 'Alice')
     get users_index_path
   end
