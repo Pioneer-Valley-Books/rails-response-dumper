@@ -30,6 +30,8 @@
 
 - On status code failure, the error now reports the dumper class and method.
 
+- Add mime/types as a dependency.
+
 ## 2.1.0 (2022-03-03)
 
 - Override `ResponseDumper#inspect` to just the class name without listing its
