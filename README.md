@@ -43,6 +43,22 @@ Just like tests, the dump methods can include setup code to add records to the
 database or include other side effects to build a more interesting dump. Dumps
 run in a transaction that always rollsback at the end.
 
+### HTTP Status Codes
+
+By default, Rails Response Dumper will raise an exception if the response does
+not have an HTTP status code 200. If you expect a different status code, use
+the keyword argument `status_code` to `dump`.
+
+```ruby
+# dumpers/users_response_dumper.rb
+
+ResponseDumper.define 'Users' do
+  dump 'show_does_not_exist', status_code: :not_found do
+    get user_path(0)
+  end
+end
+```
+
 ## `reset_models`
 
 *NOTE: This feature is only supported on PostgreSQL.*

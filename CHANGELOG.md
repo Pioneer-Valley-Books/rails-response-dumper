@@ -22,6 +22,9 @@
           └── 0.html
   ```
 
+- The `dump` method has an optional keyword argument `status_code`. Use this if
+  the dumped response has an HTTP status code other than 200.
+
 - `ResponseDumper` class now includes `ActiveSupport::Testing::TimeHelpers` to
   provide methods `freeze_time`, `travel`, and `travel_to`.
 

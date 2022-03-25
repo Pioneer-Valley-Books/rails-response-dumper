@@ -12,15 +12,14 @@ module RailsResponseDumper
       Dir[Rails.root.join('dumpers/**/*.rb')].each { |f| require f }
 
       RailsResponseDumper::Defined.dumpers.each do |defined|
-        defined.blocks.each do |dump_name, block|
+        defined.blocks.each do |dump_block|
           defined.reset_models!
 
           dumper = defined.klass.new
           dumper.mock_setup
           begin
             ActiveRecord::Base.transaction do
-              dumper.expect_status_code!(:ok)
-              dumper.instance_eval(&block)
+              dumper.instance_eval(&dump_block.block)
               raise ActiveRecord::Rollback
             end
           ensure
@@ -28,15 +27,15 @@ module RailsResponseDumper
           end
 
           klass_path = defined.name.underscore
-          dumper_dir = "#{dumps_dir}/#{klass_path}/#{dump_name}"
+          dumper_dir = "#{dumps_dir}/#{klass_path}/#{dump_block.name}"
           FileUtils.mkdir_p dumper_dir
 
           dumper.responses.each_with_index do |response, index|
-            unless response.status == dumper.expected_status_code
+            unless response.status == dump_block.expected_status_code
               raise <<~ERROR.squish
-                #{dumper.class.name}\##{method} has unexpected status
+                #{defined.name}.#{dump_block.name} has unexpected status
                 code #{response.status} #{response.status_message}
-                (expected #{dumper.expected_status_code})
+                (expected #{dump_block.expected_status_code})
               ERROR
             end
 
