@@ -6,7 +6,7 @@ require 'rails_response_dumper'
 
 # Prevent database truncation if the environment is production.
 abort 'The Rails environment is running in production mode!' if Rails.env.production?
-ActiveRecord::Migration.maintain_test_schema!
+ActiveRecord::Migration.maintain_test_schema! if defined?(ActiveRecord::Base)
 
 runner = RailsResponseDumper::Runner.new
 runner.run_dumps
