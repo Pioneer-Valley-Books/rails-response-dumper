@@ -2,8 +2,10 @@
 
 source 'https://rubygems.org'
 
+gem 'rspec', group: [:development]
 gem 'rubocop', group: [:development]
 gem 'rubocop-performance', group: [:development]
 gem 'rubocop-rails', group: [:development]
+gem 'rubocop-rspec', group: [:development]
 
 gemspec
