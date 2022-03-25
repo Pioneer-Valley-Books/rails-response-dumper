@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "#{Dir.pwd}/config/environment"
+require 'rspec/mocks'
 
 class ResponseDumper
   include ActionDispatch::Integration::Runner
