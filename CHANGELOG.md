@@ -32,6 +32,9 @@
 
 - Add mime/types as a dependency.
 
+- The rspec-mocks dependency now requires version `~> 3.0` (or `>= 3.0, <
+  4.0`).
+
 ## 2.1.0 (2022-03-03)
 
 - Override `ResponseDumper#inspect` to just the class name without listing its

@@ -20,5 +20,5 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'mime-types', '~> 3.0'
   spec.add_runtime_dependency 'rails', '>= 6.1', '< 8'
-  spec.add_runtime_dependency 'rspec-mocks'
+  spec.add_runtime_dependency 'rspec-mocks', '~> 3.0'
 end
