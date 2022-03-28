@@ -18,9 +18,8 @@ module RailsResponseDumper
           dumper = defined.klass.new
           dumper.mock_setup
           begin
-            ActiveRecord::Base.transaction do
+            rollback_after do
               dumper.instance_eval(&dump_block.block)
-              raise ActiveRecord::Rollback
             end
           ensure
             dumper.mock_teardown
@@ -44,6 +43,20 @@ module RailsResponseDumper
             File.write("#{dumper_dir}/#{index}.#{extension}", response.body)
           end
         end
+      end
+    end
+
+    private
+
+    def rollback_after
+      if defined?(ActiveRecord::Base)
+        ActiveRecord::Base.transaction do
+          yield
+          raise ActiveRecord::Rollback
+        end
+      else
+        # ActiveRecord is not installed.
+        yield
       end
     end
   end
