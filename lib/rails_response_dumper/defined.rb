@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'active_support/core_ext/module/delegation'
+require_relative 'dump_block'
 
 module RailsResponseDumper
   class Defined
@@ -21,8 +22,8 @@ module RailsResponseDumper
       self.class.dumpers << self
     end
 
-    def dump(name, &block)
-      blocks << [name, block]
+    def dump(name, status_code: :ok, &block)
+      blocks << DumpBlock.new(name, Rack::Utils::SYMBOL_TO_STATUS_CODE[status_code], block)
     end
 
     def blocks

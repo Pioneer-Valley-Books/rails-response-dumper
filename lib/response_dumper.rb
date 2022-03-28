@@ -8,8 +8,6 @@ class ResponseDumper
   include ActiveSupport::Testing::TimeHelpers
   include RSpec::Mocks::ExampleMethods
 
-  attr_reader :expected_status_code
-
   def self.define(name, &block)
     RailsResponseDumper::Defined.new(name, &block)
   end
@@ -17,10 +15,6 @@ class ResponseDumper
   # Delegates to `Rails.application`.
   def app
     Rails.application
-  end
-
-  def expect_status_code!(status_code)
-    @expected_status_code = Rack::Utils::SYMBOL_TO_STATUS_CODE[status_code]
   end
 
   def responses

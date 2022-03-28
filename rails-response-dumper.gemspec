@@ -17,6 +17,7 @@ Gem::Specification.new do |spec|
   spec.homepage = 'https://github.com/Pioneer-Valley-Books/rails-response-dumper'
   spec.metadata = { 'rubygems_mfa_required' => 'true' }
   spec.required_ruby_version = '>= 3.0'
-  spec.add_dependency 'rails', '>= 6.1', '< 8'
-  spec.add_dependency 'rspec-mocks'
+
+  spec.add_runtime_dependency 'rails', '>= 6.1', '< 8'
+  spec.add_runtime_dependency 'rspec-mocks'
 end
