@@ -30,6 +30,8 @@
 
 - On status code failure, the error now reports the dumper class and method.
 
+- Add mime/types as a dependency.
+
 - The rspec-mocks dependency now requires version `~> 3.0` (or `>= 3.0, <
   4.0`).
 

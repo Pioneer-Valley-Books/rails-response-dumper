@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'mime/types'
 require_relative 'defined'
 
 module RailsResponseDumper
