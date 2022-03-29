@@ -1,4 +1,4 @@
-## UNRELEASED
+## 3.0.0 (2022-03-29)
 
 - New DSL. Library users should no longer define child classes of
   `ResponseDumper`. Instead, use `ResponseDumper.define`. Inside the block, use
