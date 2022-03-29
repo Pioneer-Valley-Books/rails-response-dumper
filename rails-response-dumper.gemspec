@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = 'rails-response-dumper'
-  spec.version = '3.0.0'
+  spec.version = '3.0.1'
   spec.licenses = ['MIT']
   spec.summary = 'Dump HTTP responses from a Rails application to the file system'
   spec.authors = ['Pioneer Valley Books']
@@ -12,6 +12,7 @@ Gem::Specification.new do |spec|
     then be consumed by other tools for testing and verification purposes.
   DESC
 
+  spec.files = Dir['lib/**/*.rb']
   spec.executables = ['rails-response-dumper']
 
   spec.homepage = 'https://github.com/Pioneer-Valley-Books/rails-response-dumper'
