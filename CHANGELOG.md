@@ -1,3 +1,7 @@
+## 3.0.1 (2022-03-29)
+
+- Fix gem to install `lib/**/*.rb`.
+
 ## 3.0.0 (2022-03-29)
 
 - New DSL. Library users should no longer define child classes of
