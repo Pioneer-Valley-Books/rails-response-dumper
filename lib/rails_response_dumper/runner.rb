@@ -26,22 +26,34 @@ module RailsResponseDumper
             dumper.mock_teardown
           end
 
+          unless dumper.responses.count == dump_block.expected_status_codes.count
+            raise <<~ERROR.squish
+              #{defined.name}.#{dump_block.name} has unexpected number of responses
+              expected #{dump_block.expected_status_codes.count}
+              received #{dumper.responses.count}
+            ERROR
+          end
+
           klass_path = defined.name.underscore
           dumper_dir = "#{dumps_dir}/#{klass_path}/#{dump_block.name}"
           FileUtils.mkdir_p dumper_dir
 
           dumper.responses.each_with_index do |response, index|
-            unless response.status == dump_block.expected_status_code
+            unless response.status == dump_block.expected_status_codes[index]
               raise <<~ERROR.squish
                 #{defined.name}.#{dump_block.name} has unexpected status
                 code #{response.status} #{response.status_message}
-                (expected #{dump_block.expected_status_code})
+                (expected #{dump_block.expected_status_codes[index]})
               ERROR
             end
 
-            mime = response.content_type.split(/ *; */).first
-            extension = MIME::Types[mime].first.preferred_extension
-            File.write("#{dumper_dir}/#{index}.#{extension}", response.body)
+            if response.content_type
+              mime = response.content_type.split(/ *; */).first
+              extension = ".#{MIME::Types[mime].first.preferred_extension}"
+            else
+              extension = ''
+            end
+            File.write("#{dumper_dir}/#{index}#{extension}", response.body)
           end
         end
       end
