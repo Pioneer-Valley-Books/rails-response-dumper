@@ -28,9 +28,9 @@ module RailsResponseDumper
 
           unless dumper.responses.count == dump_block.expected_status_codes.count
             raise <<~ERROR.squish
-              #{defined.name}.#{dump_block.name} has unexpected number of responses
-              expected #{dump_block.expected_status_codes.count}
-              received #{dumper.responses.count}
+              #{defined.name}.#{dump_block.name} received
+              #{dumper.responses.count} responses
+              (expected #{dump_block.expected_status_codes.count})
             ERROR
           end
 
