@@ -22,8 +22,12 @@ module RailsResponseDumper
       self.class.dumpers << self
     end
 
-    def dump(name, status_code: :ok, &block)
-      blocks << DumpBlock.new(name, Rack::Utils::SYMBOL_TO_STATUS_CODE[status_code], block)
+    def dump(name, status_codes: [:ok], &block)
+      blocks << DumpBlock.new(
+        name,
+        status_codes.map { |status_code| Rack::Utils::SYMBOL_TO_STATUS_CODE[status_code] },
+        block
+      )
     end
 
     def blocks

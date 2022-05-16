@@ -46,14 +46,28 @@ run in a transaction that always rollsback at the end.
 ### HTTP Status Codes
 
 By default, Rails Response Dumper will raise an exception if the response does
-not have an HTTP status code 200. If you expect a different status code, use
-the keyword argument `status_code` to `dump`.
+not have a single HTTP status code 200. If you expect a different status code,
+or multiple status codes, use the keyword argument `status_codes` to `dump`.
 
 ```ruby
 # dumpers/users_response_dumper.rb
 
 ResponseDumper.define 'Users' do
-  dump 'show_does_not_exist', status_code: :not_found do
+  dump 'show_does_not_exist', status_codes: [:not_found] do
+    get user_path(0)
+  end
+end
+```
+
+If your dumper makes multiple requests you will have to specify each expected response
+
+```ruby
+# dumpers/users_response_dumper.rb
+
+ResponseDumper.define 'Users' do
+  dump 'show_does_not_exist', status_codes: [:ok, :not_found] do
+    user User.create!(name: 'Alice')
+    get user_path(user)
     get user_path(0)
   end
 end
@@ -66,7 +80,6 @@ end
 The method `reset_models` can be used to reset database sequences between runs.
 If a model ID value is included in the dump and it is important that this value
 is reproducible on each run, use this method.
-
 
 ```ruby
 # dumpers/users_response_dumper.rb
