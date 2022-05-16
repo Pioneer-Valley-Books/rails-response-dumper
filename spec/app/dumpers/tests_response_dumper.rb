@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-ResponseDumper.define 'Test' do
+ResponseDumper.define 'Tests' do
   dump 'multiple_requests', status_codes: %i[ok no_content] do
     get root_path
-    delete url_for(action: :destroy, controller: 'test')
+    delete url_for(controller: :tests, action: :destroy)
   end
 end

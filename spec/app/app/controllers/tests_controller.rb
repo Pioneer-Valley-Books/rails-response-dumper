@@ -1,5 +1,5 @@
 # frozen_string_literal: true
 
-class TestController < ApplicationController
+class TestsController < ApplicationController
   def destroy; end
 end
