@@ -1,4 +1,4 @@
-## UNRELEASED
+## 4.0.0 (2022-06-06)
 
 - Add support for mulitple expected status codes.
 - Add support fo dumped responses with no content type. The dumped filename
