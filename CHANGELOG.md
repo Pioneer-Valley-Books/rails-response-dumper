@@ -1,7 +1,7 @@
 ## 4.0.0 (2022-06-06)
 
-- Add support for mulitple expected status codes.
-- Add support fo dumped responses with no content type. The dumped filename
+- Add support for multiple expected status codes.
+- Add support for dumped responses with no content type. The dumped filename
   will not have a file extension.
 
 ## 3.0.1 (2022-03-29)
