@@ -1,3 +1,7 @@
+## UNRELEASED
+
+- Add support for before/after hooks.
+
 ## 4.0.0 (2022-06-06)
 
 - Add support for multiple expected status codes.

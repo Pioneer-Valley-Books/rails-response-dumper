@@ -20,7 +20,12 @@ module RailsResponseDumper
           dumper.mock_setup
           begin
             rollback_after do
-              dumper.instance_eval(&dump_block.block)
+              dumper.instance_eval(&defined.before_block) if defined.before_block
+              begin
+                dumper.instance_eval(&dump_block.block)
+              ensure
+                dumper.instance_eval(&defined.after_block) if defined.after_block
+              end
             end
           ensure
             dumper.mock_teardown
