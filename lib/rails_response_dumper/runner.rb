@@ -12,10 +12,11 @@ module RailsResponseDumper
 
       Dir[Rails.root.join('dumpers/**/*.rb')].each { |f| require f }
 
+      errors = []
+
       RailsResponseDumper::Defined.dumpers.each do |defined|
         defined.blocks.each do |dump_block|
           defined.reset_models!
-
           dumper = defined.klass.new
           dumper.mock_setup
           begin
@@ -33,7 +34,6 @@ module RailsResponseDumper
 
           unless dumper.responses.count == dump_block.expected_status_codes.count
             raise <<~ERROR.squish
-              #{defined.name}.#{dump_block.name} received
               #{dumper.responses.count} responses
               (expected #{dump_block.expected_status_codes.count})
             ERROR
@@ -46,8 +46,7 @@ module RailsResponseDumper
           dumper.responses.each_with_index do |response, index|
             unless response.status == dump_block.expected_status_codes[index]
               raise <<~ERROR.squish
-                #{defined.name}.#{dump_block.name} has unexpected status
-                code #{response.status} #{response.status_message}
+                unexpected status code #{response.status} #{response.status_message}
                 (expected #{dump_block.expected_status_codes[index]})
               ERROR
             end
@@ -60,8 +59,24 @@ module RailsResponseDumper
             end
             File.write("#{dumper_dir}/#{index}#{extension}", response.body)
           end
+        rescue StandardError => e
+          errors << {
+            dumper_location: dump_block.block.source_location.join(':'),
+            name: "#{defined.name}.#{dump_block.name}",
+            message: e.exception.message,
+            backtrace: e.cause&.backtrace || e.exception.backtrace
+          }
         end
       end
+
+      return if errors.blank?
+
+      errors.each do |error|
+        $stderr.print "#{error[:dumper_location]} #{error[:name]} received #{error[:message]}\n"
+        $stderr.print "#{error[:backtrace][0]}\n\n"
+      end
+
+      exit(false)
     end
 
     private
