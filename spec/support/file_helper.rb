@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'fileutils'
+require 'tmpdir'
+
 def tmpdir
   @tmpdir ||= Dir.mktmpdir
 end

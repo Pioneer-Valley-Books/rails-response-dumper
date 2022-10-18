@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require 'spec_helper'
 require 'open3'
+require 'spec_helper'
 
 APP_DIR = File.expand_path('app', __dir__)
 AFTER_HOOK_APP_DIR = File.expand_path('after_hook', __dir__)
