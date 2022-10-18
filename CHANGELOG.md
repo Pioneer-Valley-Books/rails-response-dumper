@@ -1,4 +1,4 @@
-## UNRELEASED
+## 4.1.0 (2022-10-18)
 
 - Add support for before/after hooks.
 
