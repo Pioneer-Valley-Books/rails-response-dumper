@@ -73,6 +73,31 @@ ResponseDumper.define 'Users' do
 end
 ```
 
+## Before/After Hooks
+
+The methods `before` and `after` can be used to run arbitrary code before and
+after each dump, allowing you to set up the specific environment for
+your dumpers to run.
+
+```ruby
+# dumpers/users_response_dumper.rb
+
+ResponseDumper.define 'Users' do
+  before do
+    ENV[API_KEY] = 'test_key'
+  end
+
+  after do
+    ENV[API_KEY] = nil
+  end
+
+  dump 'index' do
+    User.create!(name: 'Alice')
+    get users_index_path
+  end
+end
+```
+
 ## `reset_models`
 
 *NOTE: This feature is only supported on PostgreSQL.*

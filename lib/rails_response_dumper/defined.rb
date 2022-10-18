@@ -6,6 +6,7 @@ require_relative 'dump_block'
 module RailsResponseDumper
   class Defined
     attr_accessor :name, :klass
+    attr_reader :before_block, :after_block
 
     delegate :include, to: :klass
 
@@ -28,6 +29,14 @@ module RailsResponseDumper
         status_codes.map { |status_code| Rack::Utils::SYMBOL_TO_STATUS_CODE[status_code] },
         block
       )
+    end
+
+    def before(&block)
+      @before_block = block
+    end
+
+    def after(&block)
+      @after_block = block
     end
 
     def blocks
