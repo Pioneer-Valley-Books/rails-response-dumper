@@ -9,14 +9,21 @@ FAIL_APP_DIR = File.expand_path('test_apps/fail_app', __dir__)
 
 RSpec.describe 'CLI' do
   it 'renders reproducible dumps' do
-    system('bundle', 'exec', 'rails-response-dumper', chdir: APP_DIR, exception: true)
+    cmd = %w[bundle exec rails-response-dumper]
+    stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+
+    expect(stdout).to eq("...\n")
+    expect(stderr).to eq('')
+    expect(status.exitstatus).to eq(0)
+
     expect(File.join(APP_DIR, 'dumps')).to match_snapshots
   end
 
   it 'runs after hook when an exception is raised' do
     env = { 'TMPDIR' => tmpdir, 'FILENAME' => 'test.out' }
     cmd = %w[bundle exec rails-response-dumper]
-    _stdout, stderr, status = Open3.capture3(env, *cmd, chdir: AFTER_HOOK_APP_DIR)
+    stdout, stderr, status = Open3.capture3(env, *cmd, chdir: AFTER_HOOK_APP_DIR)
+    expect(stdout).to eq("F\n")
     expect(stderr).to include <<~ERR
       #{AFTER_HOOK_APP_DIR}/dumpers/after_hook_dumper.rb:8 after_hook.after_hook received after hook error
       #{AFTER_HOOK_APP_DIR}/dumpers/after_hook_dumper.rb:9:in `block (2 levels) in <top (required)>'
@@ -27,7 +34,8 @@ RSpec.describe 'CLI' do
 
   it 'outputs all errors after execution' do
     cmd = %w[bundle exec rails-response-dumper]
-    _stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
+    stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
+    expect(stdout).to eq("FF\n")
     expect(stderr).to include <<~ERR
       #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
       #{Dir.getwd}/lib/rails_response_dumper/runner.rb:48:in `block (3 levels) in run_dumps'
