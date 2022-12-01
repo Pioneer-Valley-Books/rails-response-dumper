@@ -3,8 +3,8 @@
 require 'open3'
 require 'spec_helper'
 
-APP_DIR = File.expand_path('app', __dir__)
-AFTER_HOOK_APP_DIR = File.expand_path('after_hook', __dir__)
+APP_DIR = File.expand_path('test_apps/app', __dir__)
+AFTER_HOOK_APP_DIR = File.expand_path('test_apps/after_hook', __dir__)
 
 RSpec.describe 'CLI' do
   it 'renders reproducible dumps' do
