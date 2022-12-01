@@ -1,3 +1,8 @@
+## UNRELEASED
+
+- Add error aggregation. An exception raised during the dumper runtime will no
+  longer halt execution. Instead, all errors are displayed after runtime.
+
 ## 4.1.0 (2022-10-18)
 
 - Add support for before/after hooks.
