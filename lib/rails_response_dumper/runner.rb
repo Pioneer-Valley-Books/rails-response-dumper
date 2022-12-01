@@ -59,6 +59,8 @@ module RailsResponseDumper
             end
             File.write("#{dumper_dir}/#{index}#{extension}", response.body)
           end
+
+          print '.'
         rescue StandardError => e
           errors << {
             dumper_location: dump_block.block.source_location.join(':'),
@@ -66,9 +68,12 @@ module RailsResponseDumper
             message: e.exception.message,
             backtrace: e.cause&.backtrace || e.exception.backtrace
           }
+
+          print 'F'
         end
       end
 
+      puts
       return if errors.blank?
 
       errors.each do |error|
