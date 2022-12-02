@@ -39,6 +39,18 @@ dumps
         └── 0.html
 ```
 
+The content of the dump files looks like an HTTP response. It has an HTTP
+status line, response headers, an empty line, and the response body. Each
+header line ends with a carriage return and line feed. For example:
+
+```
+HTTP 200 OK
+Content-Type: text/html; charset=utf-8
+Content-Length: 19
+
+<p>Hello World!</p>
+```
+
 Just like tests, the dump methods can include setup code to add records to the
 database or include other side effects to build a more interesting dump. Dumps
 run in a transaction that always rollsback at the end.

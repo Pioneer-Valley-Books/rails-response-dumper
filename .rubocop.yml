@@ -1,8 +1,14 @@
+inherit_mode:
+  merge:
+    - Exclude
+
 require:
   - rubocop-performance
 
 AllCops:
   NewCops: enable
+  Exclude:
+    - '**/snapshots/**/*'
 
 Metrics:
   Enabled: false

@@ -2,7 +2,13 @@
 
 - Add error aggregation. An exception raised during the dumper runtime will no
   longer halt execution. Instead, all errors are displayed after runtime.
+
 - Display real-time dumper status during dump execution.
+
+- The dumped responses now contain an HTTP status line and HTTP headers. Each
+  header line ends with a carriage return and line feed. The headers are
+  separated from the body by an empty line consisting of a carriage return and
+  line feed.
 
 ## 4.1.0 (2022-10-18)
 

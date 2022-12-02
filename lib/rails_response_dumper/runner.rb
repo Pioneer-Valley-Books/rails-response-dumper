@@ -57,7 +57,15 @@ module RailsResponseDumper
             else
               extension = ''
             end
-            File.write("#{dumper_dir}/#{index}#{extension}", response.body)
+
+            File.open("#{dumper_dir}/#{index}#{extension}", 'w') do |f|
+              f.write "HTTP #{response.status} #{response.status_message}\r\n"
+              response.headers.each do |key, value|
+                f.write "#{key}: #{value}\r\n"
+              end
+              f.write "\r\n"
+              f.write response.body
+            end
           end
 
           print '.'
