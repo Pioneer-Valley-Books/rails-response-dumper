@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'mime/types'
 require_relative 'defined'
 
 module RailsResponseDumper
@@ -51,13 +50,19 @@ module RailsResponseDumper
               ERROR
             end
 
-            if response.content_type
-              mime = response.content_type.split(/ *; */).first
-              extension = ".#{MIME::Types[mime].first.preferred_extension}"
-            else
-              extension = ''
-            end
-            File.write("#{dumper_dir}/#{index}#{extension}", response.body)
+            request = response.request
+            dump = {
+              request: {
+                method: request.method,
+                url: request.url
+              },
+              response: {
+                status: response.status,
+                headers: response.headers,
+                body: response.body
+              }
+            }
+            File.write("#{dumper_dir}/#{index}.json", JSON.pretty_generate(dump))
           end
 
           print '.'

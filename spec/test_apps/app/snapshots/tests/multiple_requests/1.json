@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "DELETE",
+    "url": "http://www.example.com/tests"
+  },
+  "response": {
+    "status": 204,
+    "headers": {
+      "X-Frame-Options": "SAMEORIGIN",
+      "X-XSS-Protection": "0",
+      "X-Content-Type-Options": "nosniff",
+      "X-Download-Options": "noopen",
+      "X-Permitted-Cross-Domain-Policies": "none",
+      "Referrer-Policy": "strict-origin-when-cross-origin",
+      "Cache-Control": "no-cache"
+    },
+    "body": ""
+  }
+}

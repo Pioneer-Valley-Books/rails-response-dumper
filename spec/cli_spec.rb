@@ -38,10 +38,10 @@ RSpec.describe 'CLI' do
     expect(stdout).to eq("FF\n")
     expect(stderr).to include <<~ERR
       #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
-      #{Dir.getwd}/lib/rails_response_dumper/runner.rb:48:in `block (3 levels) in run_dumps'
+      #{Dir.getwd}/lib/rails_response_dumper/runner.rb:47:in `block (3 levels) in run_dumps'
 
       #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:8 fail_app.invalid_number_of_statuses received 2 responses (expected 1)
-      #{Dir.getwd}/lib/rails_response_dumper/runner.rb:36:in `block (2 levels) in run_dumps'
+      #{Dir.getwd}/lib/rails_response_dumper/runner.rb:35:in `block (2 levels) in run_dumps'
     ERR
     expect(status.exitstatus).to eq(1)
   end
