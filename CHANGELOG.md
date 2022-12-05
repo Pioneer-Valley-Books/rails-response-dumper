@@ -1,4 +1,4 @@
-## UNRELEASED
+## 5.0.0 (2022-12-05)
 
 - Add error aggregation. An exception raised during the dumper runtime will no
   longer halt execution. Instead, all errors are displayed after runtime.
