@@ -36,7 +36,27 @@ $ tree dumps
 dumps
 └── users
     └── index
-        └── 0.html
+        └── 0.json
+```
+
+The content of each dump file is a JSON object with attributes that contain
+information about the HTTP request and response. For example:
+
+```json
+{
+  "request": {
+    "method": "GET",
+    "url": "http://www.example.com/test"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "text/html; charset=utf-8",
+      ...
+    },
+    "body": "<p>Hello World!</p>"
+  }
+}
 ```
 
 Just like tests, the dump methods can include setup code to add records to the

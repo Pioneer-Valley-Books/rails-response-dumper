@@ -11,5 +11,8 @@ Bundler.require(*Rails.groups)
 module AfterHook
   class Application < Rails::Application
     config.load_defaults 7.0
+    # Avoid non-deterministic headers
+    config.middleware.delete ActionDispatch::RequestId
+    config.middleware.delete Rack::Runtime
   end
 end

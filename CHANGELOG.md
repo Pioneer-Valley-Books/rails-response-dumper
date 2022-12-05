@@ -2,7 +2,31 @@
 
 - Add error aggregation. An exception raised during the dumper runtime will no
   longer halt execution. Instead, all errors are displayed after runtime.
+
 - Display real-time dumper status during dump execution.
+
+- The dumped responses are now serialized to a JSON object. The object uses the
+  format:
+
+  ```json
+  {
+    "request": {
+      "method": "GET",
+      "url": "http://www.example.com/test"
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8",
+        ...
+      },
+      "body": "..."
+    }
+  }
+  ```
+
+  As the file is always JSON, the file extension is now always `.json` and the
+  mime/types gem is no longer a dependency.
 
 ## 4.1.0 (2022-10-18)
 
