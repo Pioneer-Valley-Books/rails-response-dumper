@@ -82,8 +82,8 @@ module RailsResponseDumper
       return if errors.blank?
 
       errors.each do |error|
-        $stderr.print "#{error[:dumper_location]} #{error[:name]} received #{error[:message]}\n"
-        $stderr.print "#{error[:backtrace][0]}\n\n"
+        print "#{error[:dumper_location]} #{error[:name]} received #{error[:message]}\n"
+        print "#{error[:backtrace][0]}\n\n"
       end
 
       exit(false)

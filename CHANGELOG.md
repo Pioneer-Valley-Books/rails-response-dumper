@@ -1,3 +1,7 @@
+## UNRELEASED
+
+- Move all CLI output to stdout. 
+
 ## 5.0.0 (2022-12-05)
 
 - Add error aggregation. An exception raised during the dumper runtime will no
