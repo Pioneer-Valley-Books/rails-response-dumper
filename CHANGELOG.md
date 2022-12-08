@@ -2,6 +2,8 @@
 
 - Move all CLI output to stdout. 
 
+- Colorize CLI output for TTY environments.
+
 ## 5.0.0 (2022-12-05)
 
 - Add error aggregation. An exception raised during the dumper runtime will no

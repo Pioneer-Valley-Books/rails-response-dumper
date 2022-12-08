@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'defined'
+require_relative 'colorize'
 
 module RailsResponseDumper
   class Runner
@@ -65,7 +66,7 @@ module RailsResponseDumper
             File.write("#{dumper_dir}/#{index}.json", JSON.pretty_generate(dump))
           end
 
-          print '.'
+          RailsResponseDumper.print_color('.', :green)
         rescue StandardError => e
           errors << {
             dumper_location: dump_block.block.source_location.join(':'),
@@ -74,7 +75,7 @@ module RailsResponseDumper
             backtrace: e.cause&.backtrace || e.exception.backtrace
           }
 
-          print 'F'
+          RailsResponseDumper.print_color('F', :red)
         end
       end
 
@@ -82,8 +83,11 @@ module RailsResponseDumper
       return if errors.blank?
 
       errors.each do |error|
-        print "#{error[:dumper_location]} #{error[:name]} received #{error[:message]}\n"
-        print "#{error[:backtrace][0]}\n\n"
+        RailsResponseDumper.print_color(
+          "#{error[:dumper_location]} #{error[:name]} received #{error[:message]}\n",
+          :red
+        )
+        RailsResponseDumper.print_color("#{error[:backtrace][0]}\n\n", :cyan)
       end
 
       exit(false)
