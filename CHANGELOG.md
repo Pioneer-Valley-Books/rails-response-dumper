@@ -1,8 +1,28 @@
 ## UNRELEASED
 
-- Move all CLI output to stdout. 
+- Move all CLI output to stdout.
 
 - Colorize CLI output for TTY environments.
+
+- The request body is now included in the dump. The new format looks like:
+
+  ```json
+  {
+    "request": {
+      "method": "GET",
+      "url": "http://www.example.com/test",
+      "body": ""
+    },
+    "response": {
+      "status": 200,
+      "headers": {
+        "Content-Type": "text/html; charset=utf-8",
+        ...
+      },
+      "body": "..."
+    }
+  }
+  ```
 
 ## 5.0.0 (2022-12-05)
 

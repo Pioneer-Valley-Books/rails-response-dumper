@@ -55,7 +55,8 @@ module RailsResponseDumper
             dump = {
               request: {
                 method: request.method,
-                url: request.url
+                url: request.url,
+                body: request.body.string
               },
               response: {
                 status: response.status,

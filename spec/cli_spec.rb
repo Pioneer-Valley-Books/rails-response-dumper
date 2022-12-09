@@ -12,7 +12,7 @@ RSpec.describe 'CLI' do
     cmd = %w[bundle exec rails-response-dumper]
     stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
     expect(stderr).to eq('')
-    expect(stdout).to eq("...\n")
+    expect(stdout).to eq("....\n")
     expect(status.exitstatus).to eq(0)
 
     expect(File.join(APP_DIR, 'dumps')).to match_snapshots

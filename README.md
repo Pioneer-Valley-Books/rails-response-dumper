@@ -46,7 +46,8 @@ information about the HTTP request and response. For example:
 {
   "request": {
     "method": "GET",
-    "url": "http://www.example.com/test"
+    "url": "http://www.example.com/test",
+    "body": ""
   },
   "response": {
     "status": 200,
