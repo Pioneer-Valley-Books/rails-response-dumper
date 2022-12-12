@@ -6,6 +6,7 @@
   },
   "response": {
     "status": 200,
+    "status_text": "OK",
     "headers": {
       "X-Frame-Options": "SAMEORIGIN",
       "X-XSS-Protection": "0",

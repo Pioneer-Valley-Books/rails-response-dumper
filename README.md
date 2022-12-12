@@ -51,6 +51,7 @@ information about the HTTP request and response. For example:
   },
   "response": {
     "status": 200,
+    "status_text": "OK",
     "headers": {
       "Content-Type": "text/html; charset=utf-8",
       ...

@@ -4,7 +4,8 @@
 
 - Colorize CLI output for TTY environments.
 
-- The request body is now included in the dump. The new format looks like:
+-  The request body and the response status text are now included in the dump.
+   The new format looks like:
 
   ```json
   {
@@ -15,6 +16,7 @@
     },
     "response": {
       "status": 200,
+      "status_text": "OK",
       "headers": {
         "Content-Type": "text/html; charset=utf-8",
         ...
