@@ -1,4 +1,4 @@
-## UNRELEASED
+## 5.1.0 (2022-12-12)
 
 - Move all CLI output to stdout.
 
