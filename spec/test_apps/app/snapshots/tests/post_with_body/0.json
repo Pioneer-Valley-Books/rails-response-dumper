@@ -1,8 +1,8 @@
 {
   "request": {
-    "method": "DELETE",
+    "method": "POST",
     "url": "http://www.example.com/tests",
-    "body": ""
+    "body": "foo[bar]=baz"
   },
   "response": {
     "status": 204,
