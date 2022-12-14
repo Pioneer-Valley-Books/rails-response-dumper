@@ -73,8 +73,7 @@ module RailsResponseDumper
           errors << {
             dumper_location: dump_block.block.source_location.join(':'),
             name: "#{defined.name}.#{dump_block.name}",
-            message: e.exception.message,
-            backtrace: e.cause&.backtrace || e.exception.backtrace
+            exception: e
           }
 
           RailsResponseDumper.print_color('F', :red)
@@ -84,12 +83,16 @@ module RailsResponseDumper
       puts
       return if errors.blank?
 
+      puts
       errors.each do |error|
         RailsResponseDumper.print_color(
-          "#{error[:dumper_location]} #{error[:name]} received #{error[:message]}\n",
+          "#{error[:dumper_location]} #{error[:name]} received #{error[:exception]}\n",
           :red
         )
-        RailsResponseDumper.print_color("#{error[:backtrace][0]}\n\n", :cyan)
+        error[:exception].full_message(highlight: RailsResponseDumper::COLORIZE).lines do |line|
+          RailsResponseDumper.print_color(line, :cyan)
+        end
+        puts
       end
 
       exit(false)
