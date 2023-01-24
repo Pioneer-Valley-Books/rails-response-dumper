@@ -1,4 +1,6 @@
-## UNRELEASED
+## 5.2.0 (2023-01-24)
+
+- Output the full backtrace when reporting errors.
 
 - Add ability to abort after first error using `--fail-fast` CLI flag.
 
