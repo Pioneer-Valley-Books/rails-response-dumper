@@ -5,6 +5,12 @@ require_relative 'colorize'
 
 module RailsResponseDumper
   class Runner
+    attr_reader :options
+
+    def initialize(options)
+      @options = options
+    end
+
     def run_dumps
       dumps_dir = Rails.root.join('dumps')
       FileUtils.rm_rf dumps_dir
@@ -77,6 +83,8 @@ module RailsResponseDumper
           }
 
           RailsResponseDumper.print_color('F', :red)
+
+          break if options[:fail_fast]
         end
       end
 

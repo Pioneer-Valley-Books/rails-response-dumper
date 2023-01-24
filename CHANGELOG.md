@@ -1,3 +1,7 @@
+## UNRELEASED
+
+- Add ability to abort after first error using `--fail-fast` CLI flag.
+
 ## 5.1.0 (2022-12-12)
 
 - Move all CLI output to stdout.
