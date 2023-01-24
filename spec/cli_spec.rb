@@ -32,19 +32,38 @@ RSpec.describe 'CLI' do
     expect(File.exist?("#{tmpdir}/#{env.fetch('FILENAME')}")).to eq(true)
   end
 
-  it 'outputs all errors after execution' do
-    cmd = %w[bundle exec rails-response-dumper]
-    stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
-    expect(stderr).to eq('')
-    expect(stdout.lines[0]).to eq("FF\n")
-    expect(stdout).to include <<~ERR
-      #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
-      #{Dir.getwd}/lib/rails_response_dumper/runner.rb:48:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
-    ERR
-    expect(stdout).to include <<~ERR
-      #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:8 fail_app.invalid_number_of_statuses received 2 responses (expected 1)
-      #{Dir.getwd}/lib/rails_response_dumper/runner.rb:36:in `block (2 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
-    ERR
-    expect(status.exitstatus).to eq(1)
+  context 'when there are errors in the dumpers' do
+    let(:invalid_number_of_statuses) { 'fail_app.invalid_number_of_statuses' }
+
+    it 'outputs all errors after execution' do
+      cmd = %w[bundle exec rails-response-dumper]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
+      expect(stderr).to eq('')
+      expect(stdout.lines[0]).to eq("FF\n")
+      expect(stdout).to include <<~ERR
+        #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:54:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+      ERR
+      expect(stdout).to include <<~ERR
+        #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:8 #{invalid_number_of_statuses} received 2 responses (expected 1)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:42:in `block (2 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
+      ERR
+      expect(status.exitstatus).to eq(1)
+    end
+
+    context 'with --fail-fast argument' do
+      it 'aborts after the first error' do
+        cmd = %w[bundle exec rails-response-dumper --fail-fast]
+        stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
+        expect(stderr).to eq('')
+        expect(stdout.lines[0]).to eq("F\n")
+        expect(stdout).to include <<~ERR
+          #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
+          #{Dir.getwd}/lib/rails_response_dumper/runner.rb:54:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+        ERR
+        expect(stdout).not_to include(invalid_number_of_statuses)
+        expect(status.exitstatus).to eq(1)
+      end
+    end
   end
 end

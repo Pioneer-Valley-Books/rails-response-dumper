@@ -8,5 +8,5 @@ require 'rails_response_dumper'
 abort 'The Rails environment is running in production mode!' if Rails.env.production?
 ActiveRecord::Migration.maintain_test_schema! if defined?(ActiveRecord::Base)
 
-runner = RailsResponseDumper::Runner.new
+runner = RailsResponseDumper::Runner.new(RailsResponseDumper.parse_options!)
 runner.run_dumps
