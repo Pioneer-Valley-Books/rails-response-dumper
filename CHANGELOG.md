@@ -9,6 +9,8 @@ headers from the dumper output.
 - The dump property `response.status_text` was renamed to `response.statusText`
   to match the JavaScript `Response` constructor.
 
+- Add option to specify dump file(s) to run from CLI as an alternative to running all dumps.
+
 ## 5.3.0 (2023-03-07)
 
 - Add `--verbose` CLI option.  This option will print the dumper and block names.

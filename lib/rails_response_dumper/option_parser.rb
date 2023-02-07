@@ -7,6 +7,16 @@ module RailsResponseDumper
     options = { 'dumps-dir' => Rails.root.join('dumps') }
 
     OptionParser.new do |opts|
+      opts.banner += ' [files or directories]'
+
+      opts.separator ''
+      opts.separator 'Filtering:'
+      opts.separator 'Run for specific files or globs:'
+      opts.separator '  rails-response-dumper path/to/a_dumper.rb'
+
+      opts.separator ''
+      opts.separator 'Options:'
+
       opts.on('--dumps-dir PATH', 'Output dumps to this directory.') do |v|
         options['dumps-dir'] = v
       end
@@ -27,6 +37,8 @@ module RailsResponseDumper
         options[:exclude_response_headers] = v
       end
     end.parse!
+
+    options[:filenames] = ARGV
 
     options.freeze
   end
