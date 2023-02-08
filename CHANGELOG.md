@@ -1,6 +1,6 @@
 ## UNRELEASED
 
-- Add fix to `--fail-fast` CLI flag.  Abort dumps for all remaining dumpers,
+- Fix `--fail-fast` CLI flag. Abort dumps for all remaining dumpers,
 and not just the dumps of the current dumper in the loop.
 
 ## 5.2.0 (2023-01-24)
