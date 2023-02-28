@@ -23,6 +23,10 @@ module RailsResponseDumper
       catch :fail_fast do
         RailsResponseDumper::Defined.dumpers.each do |defined|
           defined.blocks.each do |dump_block|
+            name = "#{defined.name}.#{dump_block.name}"
+
+            print "#{name} " if options[:verbose]
+
             defined.reset_models!
             dumper = defined.klass.new
             dumper.mock_setup
@@ -76,14 +80,16 @@ module RailsResponseDumper
             end
 
             RailsResponseDumper.print_color('.', :green)
+            print("\n") if options[:verbose]
           rescue StandardError => e
             errors << {
               dumper_location: dump_block.block.source_location.join(':'),
-              name: "#{defined.name}.#{dump_block.name}",
+              name: name,
               exception: e
             }
 
             RailsResponseDumper.print_color('F', :red)
+            print("\n") if options[:verbose]
 
             throw :fail_fast if options[:fail_fast]
           end
