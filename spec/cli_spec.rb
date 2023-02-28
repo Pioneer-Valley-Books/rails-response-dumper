@@ -18,6 +18,19 @@ RSpec.describe 'CLI' do
     expect(File.join(APP_DIR, 'dumps')).to match_snapshots
   end
 
+  context 'with --verbose argument' do
+    it 'outputs dumper and dump block names' do
+      cmd = %w[bundle exec rails-response-dumper --verbose]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+      expect(stderr).to eq('')
+      expect(stdout).to eq("Hooks.hook .\nRoot.index .\nTests.post_with_body .\nTests.multiple_requests .\n\n")
+      expect(status.exitstatus).to eq(0)
+
+      # The snapshot output remains the same with the verbose option
+      expect(File.join(APP_DIR, 'dumps')).to match_snapshots
+    end
+  end
+
   it 'runs after hook when an exception is raised' do
     env = { 'TMPDIR' => tmpdir, 'FILENAME' => 'test.out' }
     cmd = %w[bundle exec rails-response-dumper]
@@ -43,15 +56,15 @@ RSpec.describe 'CLI' do
       expect(stdout.lines[0]).to eq("FFF\n")
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:55:in `block (4 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:59:in `block (4 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
       ERR
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:8 #{invalid_number_of_statuses} received 2 responses (expected 1)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:43:in `block (3 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:47:in `block (3 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
       ERR
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper_2.rb:4 #{dumper_2_invalid_status_code} received unexpected status code 200 OK (expected 404)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:55:in `block (4 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:59:in `block (4 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
       ERR
       expect(status.exitstatus).to eq(1)
     end
@@ -64,7 +77,7 @@ RSpec.describe 'CLI' do
         expect(stdout.lines[0]).to eq("F\n")
         expect(stdout).to include <<~ERR
           #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
-          #{Dir.getwd}/lib/rails_response_dumper/runner.rb:55:in `block (4 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+          #{Dir.getwd}/lib/rails_response_dumper/runner.rb:59:in `block (4 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
         ERR
         expect(stdout).not_to include(invalid_number_of_statuses)
         expect(stdout).not_to include(dumper_2_invalid_status_code)
