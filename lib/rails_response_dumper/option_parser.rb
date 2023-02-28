@@ -14,6 +14,10 @@ module RailsResponseDumper
       opts.on('--verbose', 'Output dumper and dump block names.') do |v|
         options[:verbose] = v
       end
+
+      opts.on('--order TYPE', 'Run dumps by the specified order type.') do |v|
+        options[:order] = v
+      end
     end.parse!
 
     options.freeze
