@@ -1,4 +1,4 @@
-## UNRELEASED
+## 5.3.0 (2023-03-07)
 
 - Add `--verbose` CLI option.  This option will print the dumper and block names.
 e.g. `bundle exec rails-response-dumper --verbose`.
