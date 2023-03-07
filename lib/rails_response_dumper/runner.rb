@@ -20,79 +20,96 @@ module RailsResponseDumper
 
       errors = []
 
+      dumper_blocks = RailsResponseDumper::Defined.dumpers.flat_map do |defined|
+        defined.blocks.map do |dump_block|
+          [defined, dump_block]
+        end
+      end
+
+      if options[:order].present?
+        seed = if options[:order] == 'random'
+                 Random.new_seed
+               else
+                 Integer(options[:order])
+               end
+
+        puts "Randomized with seed #{seed}"
+
+        random = Random.new(seed)
+        dumper_blocks.shuffle!(random: random)
+      end
+
       catch :fail_fast do
-        RailsResponseDumper::Defined.dumpers.each do |defined|
-          defined.blocks.each do |dump_block|
-            name = "#{defined.name}.#{dump_block.name}"
+        dumper_blocks.each do |(defined, dump_block)|
+          name = "#{defined.name}.#{dump_block.name}"
 
-            print "#{name} " if options[:verbose]
+          print "#{name} " if options[:verbose]
 
-            defined.reset_models!
-            dumper = defined.klass.new
-            dumper.mock_setup
-            begin
-              rollback_after do
-                dumper.instance_eval(&defined.before_block) if defined.before_block
-                begin
-                  dumper.instance_eval(&dump_block.block)
-                ensure
-                  dumper.instance_eval(&defined.after_block) if defined.after_block
-                end
+          defined.reset_models!
+          dumper = defined.klass.new
+          dumper.mock_setup
+          begin
+            rollback_after do
+              dumper.instance_eval(&defined.before_block) if defined.before_block
+              begin
+                dumper.instance_eval(&dump_block.block)
+              ensure
+                dumper.instance_eval(&defined.after_block) if defined.after_block
               end
-            ensure
-              dumper.mock_teardown
             end
+          ensure
+            dumper.mock_teardown
+          end
 
-            unless dumper.responses.count == dump_block.expected_status_codes.count
+          unless dumper.responses.count == dump_block.expected_status_codes.count
+            raise <<~ERROR.squish
+              #{dumper.responses.count} responses
+              (expected #{dump_block.expected_status_codes.count})
+            ERROR
+          end
+
+          klass_path = defined.name.underscore
+          dumper_dir = "#{dumps_dir}/#{klass_path}/#{dump_block.name}"
+          FileUtils.mkdir_p dumper_dir
+
+          dumper.responses.each_with_index do |response, index|
+            unless response.status == dump_block.expected_status_codes[index]
               raise <<~ERROR.squish
-                #{dumper.responses.count} responses
-                (expected #{dump_block.expected_status_codes.count})
+                unexpected status code #{response.status} #{response.status_message}
+                (expected #{dump_block.expected_status_codes[index]})
               ERROR
             end
 
-            klass_path = defined.name.underscore
-            dumper_dir = "#{dumps_dir}/#{klass_path}/#{dump_block.name}"
-            FileUtils.mkdir_p dumper_dir
-
-            dumper.responses.each_with_index do |response, index|
-              unless response.status == dump_block.expected_status_codes[index]
-                raise <<~ERROR.squish
-                  unexpected status code #{response.status} #{response.status_message}
-                  (expected #{dump_block.expected_status_codes[index]})
-                ERROR
-              end
-
-              request = response.request
-              dump = {
-                request: {
-                  method: request.method,
-                  url: request.url,
-                  body: request.body.string
-                },
-                response: {
-                  status: response.status,
-                  status_text: response.status_message,
-                  headers: response.headers,
-                  body: response.body
-                }
+            request = response.request
+            dump = {
+              request: {
+                method: request.method,
+                url: request.url,
+                body: request.body.string
+              },
+              response: {
+                status: response.status,
+                status_text: response.status_message,
+                headers: response.headers,
+                body: response.body
               }
-              File.write("#{dumper_dir}/#{index}.json", JSON.pretty_generate(dump))
-            end
-
-            RailsResponseDumper.print_color('.', :green)
-            print("\n") if options[:verbose]
-          rescue StandardError => e
-            errors << {
-              dumper_location: dump_block.block.source_location.join(':'),
-              name: name,
-              exception: e
             }
-
-            RailsResponseDumper.print_color('F', :red)
-            print("\n") if options[:verbose]
-
-            throw :fail_fast if options[:fail_fast]
+            File.write("#{dumper_dir}/#{index}.json", JSON.pretty_generate(dump))
           end
+
+          RailsResponseDumper.print_color('.', :green)
+          print("\n") if options[:verbose]
+        rescue StandardError => e
+          errors << {
+            dumper_location: dump_block.block.source_location.join(':'),
+            name: name,
+            exception: e
+          }
+
+          RailsResponseDumper.print_color('F', :red)
+          print("\n") if options[:verbose]
+
+          throw :fail_fast if options[:fail_fast]
         end
       end
 
