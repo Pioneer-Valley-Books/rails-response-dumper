@@ -1,5 +1,8 @@
 ## UNRELEASED
 
+- Add --verbose CLI option.  This option will print the dumper and block names.
+e.g. `bundle exec rails-response-dumper --verbose`.
+
 - Fix `--fail-fast` CLI flag. Abort dumps for all remaining dumpers,
 and not just the dumps of the current dumper in the loop.
 
