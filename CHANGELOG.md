@@ -3,6 +3,11 @@
 - Add `--verbose` CLI option.  This option will print the dumper and block names.
 e.g. `bundle exec rails-response-dumper --verbose`.
 
+- Add --order CLI option.  `--order random` will run the dumps in a random
+order. If given a seed value e.g. `--order 8` it will initialize the pseudo
+random number generator with the provided seed value to run the dumps in a
+reproducible order.
+
 - Fix `--fail-fast` CLI flag. Abort dumps for all remaining dumpers,
 and not just the dumps of the current dumper in the loop.
 
