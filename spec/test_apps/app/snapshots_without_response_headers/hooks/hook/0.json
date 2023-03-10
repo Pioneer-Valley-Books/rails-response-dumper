@@ -7,8 +7,6 @@
   "response": {
     "status": 200,
     "status_text": "OK",
-    "headers": {
-    },
     "body": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <title>App</title>\n  </head>\n  <body>\n    <p>Hello World!</p>\n  <p>Test</p>\n\n  </body>\n</html>\n"
   }
 }

@@ -82,8 +82,6 @@ module RailsResponseDumper
 
             request = response.request
 
-            response_headers = options[:exclude_response_headers] ? {} : response.headers
-
             dump = {
               request: {
                 method: request.method,
@@ -93,10 +91,13 @@ module RailsResponseDumper
               response: {
                 status: response.status,
                 status_text: response.status_message,
-                headers: response_headers,
+                headers: response.headers,
                 body: response.body
               }
             }
+
+            dump[:response].delete(:headers) if options[:exclude_response_headers]
+
             File.write("#{dumper_dir}/#{index}.json", JSON.pretty_generate(dump))
           end
 

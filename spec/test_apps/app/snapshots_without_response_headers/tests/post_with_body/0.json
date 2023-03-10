@@ -7,8 +7,6 @@
   "response": {
     "status": 204,
     "status_text": "No Content",
-    "headers": {
-    },
     "body": ""
   }
 }
