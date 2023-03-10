@@ -6,7 +6,7 @@
   },
   "response": {
     "status": 204,
-    "status_text": "No Content",
+    "statusText": "No Content",
     "headers": {
       "X-Frame-Options": "SAMEORIGIN",
       "X-XSS-Protection": "0",

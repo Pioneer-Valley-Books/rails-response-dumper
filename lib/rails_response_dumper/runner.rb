@@ -90,7 +90,7 @@ module RailsResponseDumper
               },
               response: {
                 status: response.status,
-                status_text: response.status_message,
+                statusText: response.status_message,
                 headers: response.headers,
                 body: response.body
               }
