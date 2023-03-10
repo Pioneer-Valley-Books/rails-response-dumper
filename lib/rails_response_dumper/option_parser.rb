@@ -24,6 +24,6 @@ module RailsResponseDumper
       end
     end.parse!
 
-    options.freeze
+    options
   end
 end

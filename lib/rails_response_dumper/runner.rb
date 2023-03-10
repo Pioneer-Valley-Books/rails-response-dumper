@@ -11,7 +11,13 @@ module RailsResponseDumper
       @options = options
     end
 
+    def merge_options(options)
+      @options = @options.merge(options)
+    end
+
     def run_dumps
+      Thread.current[:current_rails_response_runner] = self
+
       dumps_dir = Rails.root.join('dumps')
       FileUtils.rm_rf dumps_dir
       FileUtils.mkdir_p dumps_dir
@@ -114,6 +120,8 @@ module RailsResponseDumper
           print("\n") if options[:verbose]
 
           throw :fail_fast if options[:fail_fast]
+        ensure
+          Thread.current[:current_rails_response_runner] = nil
         end
       end
 
