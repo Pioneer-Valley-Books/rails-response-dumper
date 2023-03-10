@@ -2,9 +2,9 @@
 
 require 'open3'
 
-RSpec::Matchers.define :match_snapshots do |_expected|
+RSpec::Matchers.define :match_snapshots do |snapshots = nil|
   match do |actual|
-    snapshots = File.expand_path('../snapshots', actual)
+    snapshots ||= File.expand_path('../snapshots', actual)
     raise "Snapshot directory #{snapshots} does not exist" unless Dir.exist?(snapshots)
 
     cmd = ['diff', '--unified', '--recursive', actual, snapshots]

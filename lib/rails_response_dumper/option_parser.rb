@@ -18,6 +18,10 @@ module RailsResponseDumper
       opts.on('--order TYPE', 'Run dumps by the specified order type.') do |v|
         options[:order] = v
       end
+
+      opts.on('--exclude-response-headers', 'Do not output response headers.') do |v|
+        options[:exclude_response_headers] = v
+      end
     end.parse!
 
     options.freeze

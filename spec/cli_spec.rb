@@ -31,6 +31,18 @@ RSpec.describe 'CLI' do
     end
   end
 
+  context 'with --exclude-response-headers argument' do
+    it 'renders dumps without response headers' do
+      cmd = %w[bundle exec rails-response-dumper --exclude-response-headers]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+      expect(stderr).to eq('')
+      expect(stdout).to eq("....\n")
+      expect(status.exitstatus).to eq(0)
+
+      expect(File.join(APP_DIR, 'dumps')).to match_snapshots(File.join(APP_DIR, 'snapshots_without_response_headers'))
+    end
+  end
+
   context 'when run with --order' do
     context 'with type "random"' do
       it 'renders reproducible dumps with random seed' do
