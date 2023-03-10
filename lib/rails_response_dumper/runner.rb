@@ -81,6 +81,9 @@ module RailsResponseDumper
             end
 
             request = response.request
+
+            response_headers = options[:exclude_response_headers] ? {} : response.headers
+
             dump = {
               request: {
                 method: request.method,
@@ -90,7 +93,7 @@ module RailsResponseDumper
               response: {
                 status: response.status,
                 status_text: response.status_message,
-                # headers: response.headers,
+                headers: response_headers,
                 body: response.body
               }
             }

@@ -1,0 +1,14 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "http://www.example.com/tests",
+    "body": "{\"foo\":{\"bar\":\"baz\"}}"
+  },
+  "response": {
+    "status": 204,
+    "status_text": "No Content",
+    "headers": {
+    },
+    "body": ""
+  }
+}
