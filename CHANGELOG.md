@@ -3,6 +3,9 @@
 - Add `--exclude-response-headers` CLI option.  This option will suppress response
 headers from the dumper output.
 
+- The dump property `response.status_text` was renamed to `response.statusText`
+  to match the JavaScript `Response` constructor.
+
 ## 5.3.0 (2023-03-07)
 
 - Add `--verbose` CLI option.  This option will print the dumper and block names.
