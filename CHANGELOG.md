@@ -1,6 +1,6 @@
 ## UNRELEASED
 
-- Add `--exclude-response-headers` CLI option.  This option will supress response
+- Add `--exclude-response-headers` CLI option.  This option will suppress response
 headers from the dumper output.
 
 ## 5.3.0 (2023-03-07)
