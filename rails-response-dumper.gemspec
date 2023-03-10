@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |spec|
   spec.name = 'rails-response-dumper'
-  spec.version = '5.4.0'
+  spec.version = '5.3.0'
   spec.licenses = ['MIT']
   spec.summary = 'Dump HTTP responses from a Rails application to the file system'
   spec.authors = ['Pioneer Valley Books']
