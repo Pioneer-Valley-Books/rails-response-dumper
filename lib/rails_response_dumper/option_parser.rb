@@ -19,7 +19,7 @@ module RailsResponseDumper
         options[:order] = v
       end
 
-      opts.on('--exclude-response-headers', 'Do not output response headers') do |v|
+      opts.on('--exclude-response-headers', 'Do not output response headers.') do |v|
         options[:exclude_response_headers] = v
       end
     end.parse!
