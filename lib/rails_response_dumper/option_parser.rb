@@ -7,7 +7,7 @@ module RailsResponseDumper
     options = { 'dumps-dir' => Rails.root.join('dumps') }
 
     OptionParser.new do |opts|
-      opts.banner += ' [files or directories]'
+      opts.banner += ' [glob]'
 
       opts.separator ''
       opts.separator 'Filtering:'
