@@ -9,14 +9,20 @@ FAIL_APP_DIR = File.expand_path('test_apps/fail_app', __dir__)
 
 RSpec.describe 'CLI' do
   it 'renders reproducible dumps' do
-    cmd = %w[bundle exec rails-response-dumper]
-    stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
-    expect(stderr).to eq('')
-    expect(stdout).to eq("....\n")
-    expect(status.exitstatus).to eq(0)
+    dumps_dir = File.join(APP_DIR, 'dumps')
 
-    # defaults to 'dumps' directory
-    expect(File.join(APP_DIR, 'dumps')).to match_snapshots
+    begin
+      cmd = %w[bundle exec rails-response-dumper]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+      expect(stderr).to eq('')
+      expect(stdout).to eq("....\n")
+      expect(status.exitstatus).to eq(0)
+
+      # defaults to 'dumps' directory
+      expect(dumps_dir).to match_snapshots
+    ensure
+      FileUtils.rm_rf dumps_dir
+    end
   end
 
   context 'with --verbose argument' do
