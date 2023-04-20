@@ -7,6 +7,8 @@ module RailsResponseDumper
     options = {}
 
     OptionParser.new do |opts|
+      options[:dumps_dir] = Rails.root.join('dumps')
+
       opts.on('--dumps-dir DIRECTORY_NAME', 'Output dumps to this directory.') do |v|
         options[:dumps_dir] = v
       end
