@@ -7,6 +7,10 @@ module RailsResponseDumper
     options = {}
 
     OptionParser.new do |opts|
+      opts.on('--dumps-dir DIRECTORY_NAME', 'Output dumps to this directory.') do |v|
+        options[:dumps_dir] = v
+      end
+
       opts.on('--fail-fast', 'Abort the run after first failure.') do |v|
         options[:fail_fast] = v
       end

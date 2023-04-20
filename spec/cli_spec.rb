@@ -8,25 +8,21 @@ AFTER_HOOK_APP_DIR = File.expand_path('test_apps/after_hook', __dir__)
 FAIL_APP_DIR = File.expand_path('test_apps/fail_app', __dir__)
 
 RSpec.describe 'CLI' do
-  let(:env) { { 'DUMPS_DIR' => tmpdir, **env_params } }
-  let(:env_params) { {} }
-
-  before { env }
-
   it 'renders reproducible dumps' do
     cmd = %w[bundle exec rails-response-dumper]
-    stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
+    stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
     expect(stderr).to eq('')
     expect(stdout).to eq("....\n")
     expect(status.exitstatus).to eq(0)
 
-    expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+    # defaults to 'dumps' directory
+    expect(File.join(APP_DIR, 'dumps')).to match_snapshots
   end
 
   context 'with --verbose argument' do
     it 'outputs dumper and dump block names' do
-      cmd = %w[bundle exec rails-response-dumper --verbose]
-      stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
+      cmd = %W[bundle exec rails-response-dumper --verbose --dumps_dir #{tmpdir}]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
       expect(stdout).to eq("Hooks.hook .\nRoot.index .\nTests.post_with_body .\nTests.multiple_requests .\n\n")
       expect(status.exitstatus).to eq(0)
@@ -38,8 +34,8 @@ RSpec.describe 'CLI' do
 
   context 'with --exclude-response-headers argument' do
     it 'renders dumps without response headers' do
-      cmd = %w[bundle exec rails-response-dumper --exclude-response-headers]
-      stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
+      cmd = %W[bundle exec rails-response-dumper --exclude-response-headers --dumps_dir #{tmpdir}]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
       expect(stdout).to eq("....\n")
       expect(status.exitstatus).to eq(0)
@@ -51,8 +47,8 @@ RSpec.describe 'CLI' do
   context 'when run with --order' do
     context 'with type "random"' do
       it 'renders reproducible dumps with random seed' do
-        cmd = %w[bundle exec rails-response-dumper --order random]
-        stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
+        cmd = %W[bundle exec rails-response-dumper --order random --dumps_dir #{tmpdir}]
+        stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
         expect(stderr).to eq('')
         expect(stdout).to match(/\ARandomized with seed [1-9][0-9]*\n\.\.\.\.\n\z/)
         expect(status.exitstatus).to eq(0)
@@ -62,8 +58,8 @@ RSpec.describe 'CLI' do
 
     context 'when given a seed value' do
       it 'creates dump files in reproducible order' do
-        cmd = %w[bundle exec rails-response-dumper --order 8 --verbose]
-        stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
+        cmd = %W[bundle exec rails-response-dumper --order 8 --verbose --dumps_dir #{tmpdir}]
+        stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
         expect(stderr).to eq('')
         expect(stdout).to eq <<~TEXT
           Randomized with seed 8
@@ -79,21 +75,18 @@ RSpec.describe 'CLI' do
     end
   end
 
-  context 'when an exception is raised' do
-    let(:env_params) { { 'TMPDIR' => tmpdir, 'FILENAME' => 'test.out' } }
-
-    it 'runs the after hook' do
-      cmd = %w[bundle exec rails-response-dumper]
-      stdout, stderr, status = Open3.capture3(env, *cmd, chdir: AFTER_HOOK_APP_DIR)
-      expect(stderr).to eq('')
-      expect(stdout.lines[0]).to eq("F\n")
-      expect(stdout).to include <<~ERR
-        #{AFTER_HOOK_APP_DIR}/dumpers/after_hook_dumper.rb:8 after_hook.after_hook received after hook error
-        #{AFTER_HOOK_APP_DIR}/dumpers/after_hook_dumper.rb:9:in `block (2 levels) in <top (required)>': after hook error (RuntimeError)
-      ERR
-      expect(status.exitstatus).to eq(1)
-      expect(File.exist?("#{tmpdir}/#{env.fetch('FILENAME')}")).to eq(true)
-    end
+  it 'runs after hook when an exception is raised' do
+    env = { 'TMPDIR' => tmpdir, 'FILENAME' => 'test.out' }
+    cmd = %W[bundle exec rails-response-dumper --dumps_dir #{tmpdir}]
+    stdout, stderr, status = Open3.capture3(env, *cmd, chdir: AFTER_HOOK_APP_DIR)
+    expect(stderr).to eq('')
+    expect(stdout.lines[0]).to eq("F\n")
+    expect(stdout).to include <<~ERR
+      #{AFTER_HOOK_APP_DIR}/dumpers/after_hook_dumper.rb:8 after_hook.after_hook received after hook error
+      #{AFTER_HOOK_APP_DIR}/dumpers/after_hook_dumper.rb:9:in `block (2 levels) in <top (required)>': after hook error (RuntimeError)
+    ERR
+    expect(status.exitstatus).to eq(1)
+    expect(File.exist?("#{tmpdir}/#{env.fetch('FILENAME')}")).to eq(true)
   end
 
   context 'when there are errors in the dumpers' do
@@ -101,8 +94,8 @@ RSpec.describe 'CLI' do
     let(:dumper_2_invalid_status_code) { 'fail_app_2.invalid_status_code' }
 
     it 'outputs all errors after execution' do
-      cmd = %w[bundle exec rails-response-dumper]
-      stdout, stderr, status = Open3.capture3(env, *cmd, chdir: FAIL_APP_DIR)
+      cmd = %W[bundle exec rails-response-dumper --dumps_dir #{tmpdir}]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
       expect(stderr).to eq('')
       expect(stdout.lines[0]).to eq("FFF\n")
       expect(stdout).to include <<~ERR
@@ -122,8 +115,8 @@ RSpec.describe 'CLI' do
 
     context 'with --fail-fast argument' do
       it 'aborts after the first error' do
-        cmd = %w[bundle exec rails-response-dumper --fail-fast]
-        stdout, stderr, status = Open3.capture3(env, *cmd, chdir: FAIL_APP_DIR)
+        cmd = %W[bundle exec rails-response-dumper --fail-fast --dumps_dir #{tmpdir}]
+        stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
         expect(stderr).to eq('')
         expect(stdout.lines[0]).to eq("F\n")
         expect(stdout).to include <<~ERR
