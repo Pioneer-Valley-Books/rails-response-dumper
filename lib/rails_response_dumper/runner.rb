@@ -12,7 +12,7 @@ module RailsResponseDumper
     end
 
     def run_dumps
-      dumps_dir = Rails.root.join('dumps')
+      dumps_dir = ENV['DUMPS_DIR'] || Rails.root.join('dumps')
       FileUtils.rm_rf dumps_dir
       FileUtils.mkdir_p dumps_dir
 
