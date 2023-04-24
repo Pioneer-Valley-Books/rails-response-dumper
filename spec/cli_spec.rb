@@ -138,14 +138,12 @@ RSpec.describe 'CLI' do
 
   context 'with filename argument' do
     context 'without previous dumps' do
-      before { FileUtils.rm_rf("#{APP_DIR}/dumps") }
-
       context 'with one file specified' do
         it 'only runs dumps from that file' do
-          cmd = %w[bundle exec rails-response-dumper dumpers/tests_response_dumper.rb]
+          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir} dumpers/tests_response_dumper.rb]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
-          expect(File.join(APP_DIR, 'dumps')).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
+          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
 
           expect(stderr).to eq('')
           expect(stdout).to eq("..\n")
@@ -155,10 +153,13 @@ RSpec.describe 'CLI' do
 
       context 'with two files specified' do
         it 'runs dumps from both files' do
-          cmd = %w[bundle exec rails-response-dumper dumpers/tests_response_dumper.rb dumpers/root_response_dumper.rb]
+          cmd = %W[
+            bundle exec rails-response-dumper --dumps-dir #{tmpdir}
+            dumpers/tests_response_dumper.rb dumpers/root_response_dumper.rb
+          ]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
-          expect(File.join(APP_DIR, 'dumps')).to match_snapshots(File.join(APP_DIR, 'snapshots_two_files'))
+          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_two_files'))
 
           expect(stderr).to eq('')
           expect(stdout).to eq("...\n")
@@ -169,16 +170,16 @@ RSpec.describe 'CLI' do
 
     context 'with previous dumps' do
       before do
-        cmd = %w[bundle exec rails-response-dumper]
+        cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir}]
         Open3.capture3(*cmd, chdir: APP_DIR)
       end
 
       context 'with no changes to the dump file' do
         it 'does not alter the existing dumps from any file' do
-          cmd = %w[bundle exec rails-response-dumper dumpers/tests_response_dumper.rb]
+          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir} dumpers/tests_response_dumper.rb]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
-          expect(File.join(APP_DIR, 'dumps')).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
 
           expect(stderr).to eq('')
           expect(stdout).to eq("..\n")
@@ -210,7 +211,7 @@ RSpec.describe 'CLI' do
         end
 
         it 'applies updates from that dump file' do
-          cmd = %w[bundle exec rails-response-dumper dumpers/tests_response_dumper.rb]
+          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir} dumpers/tests_response_dumper.rb]
 
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
@@ -218,7 +219,7 @@ RSpec.describe 'CLI' do
           # updates altered dumps in specified file
           # creates new dumps if added to the file
           # does not delete dumps from non-specified files
-          expect(File.join(APP_DIR, 'dumps')).to match_snapshots(File.join(APP_DIR, 'snapshots_updated_dump'))
+          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_updated_dump'))
 
           expect(stderr).to eq('')
           expect(stdout).to eq("..\n")
