@@ -1,5 +1,8 @@
 ## UNRELEASED
 
+- Add `--dumps-dir` CLI option. This option allows the user to specify a
+directory to which the dumps are saved.
+
 - Add `--exclude-response-headers` CLI option.  This option will suppress response
 headers from the dumper output.
 

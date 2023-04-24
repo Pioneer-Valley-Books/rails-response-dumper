@@ -4,9 +4,13 @@ require 'optparse'
 
 module RailsResponseDumper
   def self.parse_options!
-    options = {}
+    options = { 'dumps-dir' => Rails.root.join('dumps') }
 
     OptionParser.new do |opts|
+      opts.on('--dumps-dir PATH', 'Output dumps to this directory.') do |v|
+        options['dumps-dir'] = v
+      end
+
       opts.on('--fail-fast', 'Abort the run after first failure.') do |v|
         options[:fail_fast] = v
       end
