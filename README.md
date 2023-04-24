@@ -120,6 +120,15 @@ ResponseDumper.define 'Users' do
 end
 ```
 
+## Running Dumps for Specific Files
+
+To generate dumps for only specifc files or globs, specify them while running
+the `rails-response-dumper` command as follows:
+
+```console
+$ rails-response-dumper path/to/a/file.rb
+```
+
 ## `reset_models`
 
 *NOTE: This feature is only supported on PostgreSQL.*
