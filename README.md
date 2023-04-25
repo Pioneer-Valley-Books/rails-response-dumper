@@ -65,6 +65,15 @@ Just like tests, the dump methods can include setup code to add records to the
 database or include other side effects to build a more interesting dump. Dumps
 run in a transaction that always rollsback at the end.
 
+### Running Dumps for Specific Files
+
+To generate dumps for only specifc files or globs, specify them while running
+the `rails-response-dumper` command as follows:
+
+```console
+$ rails-response-dumper path/to/a/file.rb
+```
+
 ### HTTP Status Codes
 
 By default, Rails Response Dumper will raise an exception if the response does
@@ -118,15 +127,6 @@ ResponseDumper.define 'Users' do
     get users_index_path
   end
 end
-```
-
-## Running Dumps for Specific Files
-
-To generate dumps for only specifc files or globs, specify them while running
-the `rails-response-dumper` command as follows:
-
-```console
-$ rails-response-dumper path/to/a/file.rb
 ```
 
 ## `reset_models`
