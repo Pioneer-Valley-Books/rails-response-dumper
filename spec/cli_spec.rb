@@ -169,17 +169,19 @@ RSpec.describe 'CLI' do
     end
 
     context 'with previous dumps' do
+      let(:dumps_dir) { "#{tmpdir}/dumps" }
+
       before do
-        cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir}]
+        cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
         Open3.capture3(*cmd, chdir: APP_DIR)
       end
 
       context 'with no changes to the dump file' do
         it 'does not alter the existing dumps from any file' do
-          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir} dumpers/tests_response_dumper.rb]
+          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} dumpers/tests_response_dumper.rb]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
-          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+          expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
 
           expect(stderr).to eq('')
           expect(stdout).to eq("..\n")
@@ -188,38 +190,21 @@ RSpec.describe 'CLI' do
       end
 
       context 'with changes to the dump file' do
-        before do
-          FileUtils.mv(
-            "#{APP_DIR}/dumpers/tests_response_dumper.rb",
-            "#{APP_DIR}/configurable_dumpers/initial_tests_response_dumper.rb"
-          )
-          FileUtils.mv(
-            "#{APP_DIR}/configurable_dumpers/tests_response_dumper.rb",
-            "#{APP_DIR}/dumpers/tests_response_dumper.rb"
-          )
-        end
-
-        after do
-          FileUtils.mv(
-            "#{APP_DIR}/dumpers/tests_response_dumper.rb",
-            "#{APP_DIR}/configurable_dumpers/tests_response_dumper.rb"
-          )
-          FileUtils.mv(
-            "#{APP_DIR}/configurable_dumpers/initial_tests_response_dumper.rb",
-            "#{APP_DIR}/dumpers/tests_response_dumper.rb"
-          )
-        end
-
-        it 'applies updates from that dump file' do
-          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir} dumpers/tests_response_dumper.rb]
+        it 'applies updates from the new dump file' do
+          cmd = %W[
+            bundle exec rails-response-dumper --dumps-dir #{dumps_dir}
+            configurable_dumpers/tests_response_dumper.rb
+          ]
+          # command references dumper file with same name but updated contents
+          # to replicate re-running a dump after editing a file
 
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
-          # deletes any dumps that no longer exist in that file
+          # deletes any dumps that no longer exist in specified file
           # updates altered dumps in specified file
           # creates new dumps if added to the file
           # does not delete dumps from non-specified files
-          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_updated_dump'))
+          expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_updated_dump'))
 
           expect(stderr).to eq('')
           expect(stdout).to eq("..\n")
