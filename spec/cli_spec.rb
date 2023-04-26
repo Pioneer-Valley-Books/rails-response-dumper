@@ -106,15 +106,15 @@ RSpec.describe 'CLI' do
       expect(stdout.lines[0]).to eq("FFF\n")
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:77:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:91:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
       ERR
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:8 #{invalid_number_of_statuses} received 2 responses (expected 1)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:65:in `block (2 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:79:in `block (2 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
       ERR
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper_2.rb:4 #{dumper_2_invalid_status_code} received unexpected status code 200 OK (expected 404)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:77:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:91:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
       ERR
       expect(status.exitstatus).to eq(1)
     end
@@ -127,11 +127,89 @@ RSpec.describe 'CLI' do
         expect(stdout.lines[0]).to eq("F\n")
         expect(stdout).to include <<~ERR
           #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
-          #{Dir.getwd}/lib/rails_response_dumper/runner.rb:77:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+          #{Dir.getwd}/lib/rails_response_dumper/runner.rb:91:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
         ERR
         expect(stdout).not_to include(invalid_number_of_statuses)
         expect(stdout).not_to include(dumper_2_invalid_status_code)
         expect(status.exitstatus).to eq(1)
+      end
+    end
+  end
+
+  context 'with filename argument' do
+    context 'without previous dumps' do
+      context 'with one file specified' do
+        it 'only runs dumps from that file' do
+          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir} dumpers/tests_response_dumper.rb]
+          stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+
+          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
+
+          expect(stderr).to eq('')
+          expect(stdout).to eq("..\n")
+          expect(status.exitstatus).to eq(0)
+        end
+      end
+
+      context 'with two files specified' do
+        it 'runs dumps from both files' do
+          cmd = %W[
+            bundle exec rails-response-dumper --dumps-dir #{tmpdir}
+            dumpers/tests_response_dumper.rb dumpers/root_response_dumper.rb
+          ]
+          stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+
+          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_two_files'))
+
+          expect(stderr).to eq('')
+          expect(stdout).to eq("...\n")
+          expect(status.exitstatus).to eq(0)
+        end
+      end
+    end
+
+    context 'with previous dumps' do
+      let(:dumps_dir) { "#{tmpdir}/dumps" }
+
+      before do
+        cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
+        Open3.capture3(*cmd, chdir: APP_DIR)
+      end
+
+      context 'with no changes to the dump file' do
+        it 'does not alter the existing dumps from any file' do
+          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} dumpers/tests_response_dumper.rb]
+          stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+
+          expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+
+          expect(stderr).to eq('')
+          expect(stdout).to eq("..\n")
+          expect(status.exitstatus).to eq(0)
+        end
+      end
+
+      context 'with changes to the dump file' do
+        it 'applies updates from the new dump file' do
+          cmd = %W[
+            bundle exec rails-response-dumper --dumps-dir #{dumps_dir}
+            configurable_dumpers/tests_response_dumper.rb
+          ]
+          # command references dumper file with same name but updated contents
+          # to replicate re-running a dump after editing a file
+
+          stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+
+          # deletes any dumps that no longer exist in specified file
+          # updates altered dumps in specified file
+          # creates new dumps if added to the file
+          # does not delete dumps from non-specified files
+          expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_updated_dump'))
+
+          expect(stderr).to eq('')
+          expect(stdout).to eq("..\n")
+          expect(status.exitstatus).to eq(0)
+        end
       end
     end
   end

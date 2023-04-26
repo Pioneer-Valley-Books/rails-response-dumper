@@ -13,14 +13,28 @@ module RailsResponseDumper
 
     def run_dumps
       dumps_dir = options['dumps-dir']
-      FileUtils.rm_rf dumps_dir
+
+      if options[:filenames].present?
+        globs = options[:filenames]
+      else
+        globs = ['dumpers/**/*.rb']
+        FileUtils.rm_rf dumps_dir
+      end
+
       FileUtils.mkdir_p dumps_dir
 
-      Dir[Rails.root.join('dumpers/**/*.rb')].each { |f| require f }
+      globs.each do |glob|
+        Dir[Rails.root.join(glob)].each { |f| require f }
+      end
 
       errors = []
 
       dumper_blocks = RailsResponseDumper::Defined.dumpers.flat_map do |defined|
+        if options[:filenames].present?
+          # clear previous dumps for that file in case removed from updated dump file
+          FileUtils.rm_rf "#{dumps_dir}/#{defined.name.underscore}/"
+        end
+
         defined.blocks.map do |dump_block|
           [defined, dump_block]
         end
