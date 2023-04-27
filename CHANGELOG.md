@@ -1,4 +1,4 @@
-## UNRELEASED
+## 6.0.0 (2023-04-27)
 
 - Add `--dumps-dir` CLI option. This option allows the user to specify a
 directory to which the dumps are saved.
