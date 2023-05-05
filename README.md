@@ -67,7 +67,7 @@ run in a transaction that always rollsback at the end.
 
 ### Running Dumps for Specific Files
 
-To generate dumps for only specifc files or globs, specify them while running
+To generate dumps for only specific files or globs, specify them while running
 the `rails-response-dumper` command as follows:
 
 ```console
