@@ -1,3 +1,9 @@
+## UNRELEASED
+
+- Start the database transaction with the `joinable: false` argument passed.
+  This allows model `after_commit` hooks to run and improves compatibility with
+  ActiveStorage.
+
 ## 6.0.0 (2023-04-27)
 
 - Add `--dumps-dir` CLI option. This option allows the user to specify a

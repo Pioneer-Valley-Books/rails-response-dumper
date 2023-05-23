@@ -153,7 +153,7 @@ module RailsResponseDumper
 
     def rollback_after
       if defined?(ActiveRecord::Base)
-        ActiveRecord::Base.transaction do
+        ActiveRecord::Base.transaction(joinable: false) do
           yield
           raise ActiveRecord::Rollback
         end
