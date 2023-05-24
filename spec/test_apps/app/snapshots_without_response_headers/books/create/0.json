@@ -1,0 +1,12 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "http://www.example.com/books",
+    "body": ""
+  },
+  "response": {
+    "status": 204,
+    "statusText": "No Content",
+    "body": ""
+  }
+}

@@ -8,6 +8,17 @@ AFTER_HOOK_APP_DIR = File.expand_path('test_apps/after_hook', __dir__)
 FAIL_APP_DIR = File.expand_path('test_apps/fail_app', __dir__)
 
 RSpec.describe 'CLI' do
+  let(:dumps_dir) { "#{tmpdir}/dumps" }
+
+  before do
+    ENV['DATABASE_URL'] = "sqlite3:#{tmpdir}/db"
+    system({ 'RAILS_ENV' => 'test' }, 'bundle', 'exec', 'rails', 'db:schema:load', chdir: APP_DIR, exception: true)
+  end
+
+  after do
+    ENV['DATABASE_URL'] = nil
+  end
+
   it 'renders reproducible dumps' do
     dumps_dir = File.join(APP_DIR, 'dumps')
 
@@ -15,7 +26,7 @@ RSpec.describe 'CLI' do
       cmd = %w[bundle exec rails-response-dumper]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq("....\n")
+      expect(stdout).to eq(".....\n")
       expect(status.exitstatus).to eq(0)
 
       # defaults to 'dumps' directory
@@ -27,63 +38,71 @@ RSpec.describe 'CLI' do
 
   context 'with --verbose argument' do
     it 'outputs dumper and dump block names' do
-      cmd = %W[bundle exec rails-response-dumper --verbose --dumps-dir #{tmpdir}]
+      cmd = %W[bundle exec rails-response-dumper --verbose --dumps-dir #{dumps_dir}]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq("Hooks.hook .\nRoot.index .\nTests.post_with_body .\nTests.multiple_requests .\n\n")
+      expect(stdout).to eq <<~TEXT
+        Books.create .
+        Hooks.hook .
+        Root.index .
+        Tests.post_with_body .
+        Tests.multiple_requests .
+
+      TEXT
       expect(status.exitstatus).to eq(0)
 
       # The snapshot output remains the same with the verbose option
-      expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+      expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
     end
   end
 
   context 'with --exclude-response-headers argument' do
     it 'renders dumps without response headers' do
-      cmd = %W[bundle exec rails-response-dumper --exclude-response-headers --dumps-dir #{tmpdir}]
+      cmd = %W[bundle exec rails-response-dumper --exclude-response-headers --dumps-dir #{dumps_dir}]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq("....\n")
+      expect(stdout).to eq(".....\n")
       expect(status.exitstatus).to eq(0)
 
-      expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_without_response_headers'))
+      expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_without_response_headers'))
     end
   end
 
   context 'when run with --order' do
     context 'with type "random"' do
       it 'renders reproducible dumps with random seed' do
-        cmd = %W[bundle exec rails-response-dumper --order random --dumps-dir #{tmpdir}]
+        cmd = %W[bundle exec rails-response-dumper --order random --dumps-dir #{dumps_dir}]
         stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
         expect(stderr).to eq('')
-        expect(stdout).to match(/\ARandomized with seed [1-9][0-9]*\n\.\.\.\.\n\z/)
+        expect(stdout).to match(/\ARandomized with seed [1-9][0-9]*\n\.\.\.\.\.\n\z/)
         expect(status.exitstatus).to eq(0)
-        expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+        expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
       end
     end
 
     context 'when given a seed value' do
       it 'creates dump files in reproducible order' do
-        cmd = %W[bundle exec rails-response-dumper --order 8 --verbose --dumps-dir #{tmpdir}]
+        cmd = %W[bundle exec rails-response-dumper --order 8 --verbose --dumps-dir #{dumps_dir}]
         stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
         expect(stderr).to eq('')
         expect(stdout).to eq <<~TEXT
           Randomized with seed 8
-          Tests.post_with_body .
+          Tests.multiple_requests .
           Root.index .
           Hooks.hook .
-          Tests.multiple_requests .
+          Books.create .
+          Tests.post_with_body .
 
         TEXT
         expect(status.exitstatus).to eq(0)
-        expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+        expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
       end
     end
   end
 
   it 'runs after hook when an exception is raised' do
     env = { 'TMPDIR' => tmpdir, 'FILENAME' => 'test.out' }
-    cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir}]
+    cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
     stdout, stderr, status = Open3.capture3(env, *cmd, chdir: AFTER_HOOK_APP_DIR)
     expect(stderr).to eq('')
     expect(stdout.lines[0]).to eq("F\n")
@@ -95,12 +114,22 @@ RSpec.describe 'CLI' do
     expect(File.exist?("#{tmpdir}/#{env.fetch('FILENAME')}")).to eq(true)
   end
 
+  it 'executes model after_commit hooks' do
+    env = { 'AFTER_COMMIT' => '1' }
+    cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
+    stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
+    expect(stderr).to eq('')
+    expect(stdout).to eq("Commit Book\n.....\n")
+    expect(status.exitstatus).to eq(0)
+    expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+  end
+
   context 'when there are errors in the dumpers' do
     let(:invalid_number_of_statuses) { 'fail_app.invalid_number_of_statuses' }
     let(:dumper_2_invalid_status_code) { 'fail_app_2.invalid_status_code' }
 
     it 'outputs all errors after execution' do
-      cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir}]
+      cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
       expect(stderr).to eq('')
       expect(stdout.lines[0]).to eq("FFF\n")
@@ -121,7 +150,7 @@ RSpec.describe 'CLI' do
 
     context 'with --fail-fast argument' do
       it 'aborts after the first error' do
-        cmd = %W[bundle exec rails-response-dumper --fail-fast --dumps-dir #{tmpdir}]
+        cmd = %W[bundle exec rails-response-dumper --fail-fast --dumps-dir #{dumps_dir}]
         stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
         expect(stderr).to eq('')
         expect(stdout.lines[0]).to eq("F\n")
@@ -140,10 +169,10 @@ RSpec.describe 'CLI' do
     context 'without previous dumps' do
       context 'with one file specified' do
         it 'only runs dumps from that file' do
-          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{tmpdir} dumpers/tests_response_dumper.rb]
+          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} dumpers/tests_response_dumper.rb]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
-          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
+          expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
 
           expect(stderr).to eq('')
           expect(stdout).to eq("..\n")
@@ -154,12 +183,12 @@ RSpec.describe 'CLI' do
       context 'with two files specified' do
         it 'runs dumps from both files' do
           cmd = %W[
-            bundle exec rails-response-dumper --dumps-dir #{tmpdir}
+            bundle exec rails-response-dumper --dumps-dir #{dumps_dir}
             dumpers/tests_response_dumper.rb dumpers/root_response_dumper.rb
           ]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
-          expect(tmpdir).to match_snapshots(File.join(APP_DIR, 'snapshots_two_files'))
+          expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_two_files'))
 
           expect(stderr).to eq('')
           expect(stdout).to eq("...\n")
@@ -169,8 +198,6 @@ RSpec.describe 'CLI' do
     end
 
     context 'with previous dumps' do
-      let(:dumps_dir) { "#{tmpdir}/dumps" }
-
       before do
         cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
         Open3.capture3(*cmd, chdir: APP_DIR)
