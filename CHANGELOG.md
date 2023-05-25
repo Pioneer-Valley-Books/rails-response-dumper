@@ -1,4 +1,4 @@
-## UNRELEASED
+## 6.1.0 (2023-05-24)
 
 - Start the database transaction with the `joinable: false` argument passed.
   This allows model `after_commit` hooks to run and improves compatibility with
