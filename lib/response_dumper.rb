@@ -35,7 +35,7 @@ class ResponseDumper
     module_eval <<~RUBY, __FILE__, __LINE__ + 1
       def #{method}(...)
         result = super
-        self.responses << response
+        self.responses << [response, Time.zone.now]
         result
       end
     RUBY

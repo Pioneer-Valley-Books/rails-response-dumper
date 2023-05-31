@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'json'
 require 'open3'
 require 'spec_helper'
 
@@ -23,7 +24,7 @@ RSpec.describe 'CLI' do
     dumps_dir = File.join(APP_DIR, 'dumps')
 
     begin
-      cmd = %w[bundle exec rails-response-dumper]
+      cmd = %w[bundle exec rails-response-dumper --exclude-timestamp]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
       expect(stdout).to eq(".....\n")
@@ -38,7 +39,7 @@ RSpec.describe 'CLI' do
 
   context 'with --verbose argument' do
     it 'outputs dumper and dump block names' do
-      cmd = %W[bundle exec rails-response-dumper --verbose --dumps-dir #{dumps_dir}]
+      cmd = %W[bundle exec rails-response-dumper --verbose --dumps-dir #{dumps_dir} --exclude-timestamp]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
       expect(stdout).to eq <<~TEXT
@@ -58,7 +59,12 @@ RSpec.describe 'CLI' do
 
   context 'with --exclude-response-headers argument' do
     it 'renders dumps without response headers' do
-      cmd = %W[bundle exec rails-response-dumper --exclude-response-headers --dumps-dir #{dumps_dir}]
+      cmd = %W[
+        bundle exec rails-response-dumper
+        --exclude-response-headers
+        --dumps-dir #{dumps_dir}
+        --exclude-timestamp
+      ]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
       expect(stdout).to eq(".....\n")
@@ -71,7 +77,7 @@ RSpec.describe 'CLI' do
   context 'when run with --order' do
     context 'with type "random"' do
       it 'renders reproducible dumps with random seed' do
-        cmd = %W[bundle exec rails-response-dumper --order random --dumps-dir #{dumps_dir}]
+        cmd = %W[bundle exec rails-response-dumper --order random --dumps-dir #{dumps_dir} --exclude-timestamp]
         stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
         expect(stderr).to eq('')
         expect(stdout).to match(/\ARandomized with seed [1-9][0-9]*\n\.\.\.\.\.\n\z/)
@@ -82,7 +88,7 @@ RSpec.describe 'CLI' do
 
     context 'when given a seed value' do
       it 'creates dump files in reproducible order' do
-        cmd = %W[bundle exec rails-response-dumper --order 8 --verbose --dumps-dir #{dumps_dir}]
+        cmd = %W[bundle exec rails-response-dumper --order 8 --verbose --dumps-dir #{dumps_dir} --exclude-timestamp]
         stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
         expect(stderr).to eq('')
         expect(stdout).to eq <<~TEXT
@@ -102,7 +108,7 @@ RSpec.describe 'CLI' do
 
   it 'runs after hook when an exception is raised' do
     env = { 'TMPDIR' => tmpdir, 'FILENAME' => 'test.out' }
-    cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
+    cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
     stdout, stderr, status = Open3.capture3(env, *cmd, chdir: AFTER_HOOK_APP_DIR)
     expect(stderr).to eq('')
     expect(stdout.lines[0]).to eq("F\n")
@@ -116,7 +122,7 @@ RSpec.describe 'CLI' do
 
   it 'executes model after_commit hooks' do
     env = { 'AFTER_COMMIT' => '1' }
-    cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
+    cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
     stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
     expect(stderr).to eq('')
     expect(stdout).to eq("Commit Book\n.....\n")
@@ -129,7 +135,7 @@ RSpec.describe 'CLI' do
     let(:dumper_2_invalid_status_code) { 'fail_app_2.invalid_status_code' }
 
     it 'outputs all errors after execution' do
-      cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
+      cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
       expect(stderr).to eq('')
       expect(stdout.lines[0]).to eq("FFF\n")
@@ -150,7 +156,7 @@ RSpec.describe 'CLI' do
 
     context 'with --fail-fast argument' do
       it 'aborts after the first error' do
-        cmd = %W[bundle exec rails-response-dumper --fail-fast --dumps-dir #{dumps_dir}]
+        cmd = %W[bundle exec rails-response-dumper --fail-fast --dumps-dir #{dumps_dir} --exclude-timestamp]
         stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
         expect(stderr).to eq('')
         expect(stdout.lines[0]).to eq("F\n")
@@ -169,7 +175,12 @@ RSpec.describe 'CLI' do
     context 'without previous dumps' do
       context 'with one file specified' do
         it 'only runs dumps from that file' do
-          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} dumpers/tests_response_dumper.rb]
+          cmd = %W[
+            bundle exec rails-response-dumper
+            --dumps-dir #{dumps_dir}
+            --exclude-timestamp
+            dumpers/tests_response_dumper.rb
+          ]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
           expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
@@ -183,7 +194,9 @@ RSpec.describe 'CLI' do
       context 'with two files specified' do
         it 'runs dumps from both files' do
           cmd = %W[
-            bundle exec rails-response-dumper --dumps-dir #{dumps_dir}
+            bundle exec rails-response-dumper
+            --dumps-dir #{dumps_dir}
+            --exclude-timestamp
             dumpers/tests_response_dumper.rb dumpers/root_response_dumper.rb
           ]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
@@ -199,13 +212,18 @@ RSpec.describe 'CLI' do
 
     context 'with previous dumps' do
       before do
-        cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
+        cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
         Open3.capture3(*cmd, chdir: APP_DIR)
       end
 
       context 'with no changes to the dump file' do
         it 'does not alter the existing dumps from any file' do
-          cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} dumpers/tests_response_dumper.rb]
+          cmd = %W[
+            bundle exec rails-response-dumper
+            --dumps-dir #{dumps_dir}
+            --exclude-timestamp
+            dumpers/tests_response_dumper.rb
+          ]
           stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
 
           expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
@@ -219,7 +237,9 @@ RSpec.describe 'CLI' do
       context 'with changes to the dump file' do
         it 'applies updates from the new dump file' do
           cmd = %W[
-            bundle exec rails-response-dumper --dumps-dir #{dumps_dir}
+            bundle exec rails-response-dumper
+            --dumps-dir #{dumps_dir}
+            --exclude-timestamp
             configurable_dumpers/tests_response_dumper.rb
           ]
           # command references dumper file with same name but updated contents
@@ -237,6 +257,23 @@ RSpec.describe 'CLI' do
           expect(stdout).to eq("..\n")
           expect(status.exitstatus).to eq(0)
         end
+      end
+    end
+  end
+
+  context 'without the --exclude-timestamp argument' do
+    it 'includes a ISO 8601 timestamp in each dump' do
+      cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+      expect(stderr).to eq('')
+      expect(stdout).to eq(".....\n")
+      expect(status.exitstatus).to eq(0)
+
+      dumps = Dir.glob("#{dumps_dir}/**/*.json")
+      expect(dumps.length).to eq(7)
+      dumps.each do |path|
+        dump = JSON.parse!(File.read(path))
+        expect(dump['timestamp']).to match(/\A\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\dZ\z/)
       end
     end
   end
