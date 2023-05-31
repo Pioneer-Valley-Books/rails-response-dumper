@@ -1,4 +1,4 @@
-## UNRELEASED
+## 6.2.0 (2023-05-31)
 
 - Add `timestamp` property to dumps. Its value is the Rails timestamp in ISO
   8601 format.
