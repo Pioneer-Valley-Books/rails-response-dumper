@@ -86,7 +86,7 @@ module RailsResponseDumper
           dumper_dir = "#{dumps_dir}/#{klass_path}/#{dump_block.name}"
           FileUtils.mkdir_p dumper_dir
 
-          dumper.responses.each_with_index do |response, index|
+          dumper.responses.each_with_index do |(response, timestamp), index|
             unless response.status == dump_block.expected_status_codes[index]
               raise <<~ERROR.squish
                 unexpected status code #{response.status} #{response.status_message}
@@ -111,6 +111,8 @@ module RailsResponseDumper
             }
 
             dump[:response].delete(:headers) if options[:exclude_response_headers]
+
+            dump[:timestamp] = timestamp.iso8601 unless options[:exclude_timestamp]
 
             File.write("#{dumper_dir}/#{index}.json", JSON.pretty_generate(dump))
           end

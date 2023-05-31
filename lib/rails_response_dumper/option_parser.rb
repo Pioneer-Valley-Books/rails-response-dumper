@@ -36,6 +36,10 @@ module RailsResponseDumper
       opts.on('--exclude-response-headers', 'Do not output response headers.') do |v|
         options[:exclude_response_headers] = v
       end
+
+      opts.on('--exclude-timestamp', 'Do not output a timestamp with each dump.') do |v|
+        options[:exclude_timestamp] = v
+      end
     end.parse!
 
     options[:filenames] = ARGV

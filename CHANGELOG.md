@@ -1,3 +1,8 @@
+## UNRELEASED
+
+- Add `timestamp` property to dumps. Its value is the Rails timestamp in ISO
+  8601 format.
+
 ## 6.1.0 (2023-05-24)
 
 - Start the database transaction with the `joinable: false` argument passed.
