@@ -29,6 +29,10 @@ module RailsResponseDumper
         options[:verbose] = v
       end
 
+      opts.on('--profile', 'Enable profiling of dumps and list the slowest.') do |v|
+        options[:profile] = v
+      end
+
       opts.on('--order TYPE', 'Run dumps by the specified order type.') do |v|
         options[:order] = v
       end
