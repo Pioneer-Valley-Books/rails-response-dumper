@@ -3,6 +3,9 @@
 - Add the `--profile` CLI option. This option will print the names of the 10
   slowest dumps and their time from the run.
 
+- Running `rails-response-dumper` with no arguments now limits discovery to
+  `*_dumper.rb` files instead of all `*.rb` files.
+
 ## 6.2.0 (2023-05-31)
 
 - Add `timestamp` property to dumps. Its value is the Rails timestamp in ISO
