@@ -53,6 +53,8 @@ module RailsResponseDumper
         dumper_blocks.shuffle!(random: random)
       end
 
+      profile = {}
+
       catch :fail_fast do
         dumper_blocks.each do |(defined, dump_block)|
           name = "#{defined.name}.#{dump_block.name}"
@@ -64,12 +66,14 @@ module RailsResponseDumper
           dumper.mock_setup
           begin
             rollback_after do
+              t0 = Time.now
               dumper.instance_eval(&defined.before_block) if defined.before_block
               begin
                 dumper.instance_eval(&dump_block.block)
               ensure
                 dumper.instance_eval(&defined.after_block) if defined.after_block
               end
+              profile[name] = Time.now - t0
             end
           ensure
             dumper.mock_teardown
@@ -134,21 +138,36 @@ module RailsResponseDumper
       end
 
       puts
-      return if errors.blank?
 
-      puts
-      errors.each do |error|
-        RailsResponseDumper.print_color(
-          "#{error[:dumper_location]} #{error[:name]} received #{error[:exception]}\n",
-          :red
-        )
-        error[:exception].full_message(highlight: RailsResponseDumper::COLORIZE).lines do |line|
-          RailsResponseDumper.print_color(line, :cyan)
+      unless errors.blank?
+        puts
+
+        errors.each do |error|
+          RailsResponseDumper.print_color(
+            "#{error[:dumper_location]} #{error[:name]} received #{error[:exception]}\n",
+            :red
+          )
+          error[:exception].full_message(highlight: RailsResponseDumper::COLORIZE).lines do |line|
+            RailsResponseDumper.print_color(line, :cyan)
+          end
+          puts
         end
+      end
+
+      if options.include?(:profile)
+        puts
+
+        # Sort in descending order to obtain the 10 slowest dumps.
+        timings = profile.to_a.sort_by { |(_key, value)| -value }
+        timings.first(10).each do |(dump, time)|
+          formatted_time = format('%.2f', time)
+          puts "#{dump} #{formatted_time} s"
+        end
+
         puts
       end
 
-      exit(false)
+      exit(errors.blank?)
     end
 
     private
