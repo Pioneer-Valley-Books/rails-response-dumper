@@ -161,7 +161,7 @@ RSpec.describe 'CLI' do
         #{Dir.getwd}/lib/rails_response_dumper/runner.rb:83:in `block (2 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
       ERR
       expect(stdout).to include <<~ERR
-        #{FAIL_APP_DIR}/dumpers/fail_app_dumper_2.rb:4 #{dumper_2_invalid_status_code} received unexpected status code 200 OK (expected 404)
+        #{FAIL_APP_DIR}/dumpers/fail_app_other_dumper.rb:4 #{dumper_2_invalid_status_code} received unexpected status code 200 OK (expected 404)
         #{Dir.getwd}/lib/rails_response_dumper/runner.rb:95:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
       ERR
       expect(status.exitstatus).to eq(1)

@@ -17,7 +17,7 @@ module RailsResponseDumper
       if options[:filenames].present?
         globs = options[:filenames]
       else
-        globs = ['dumpers/**/*.rb']
+        globs = ['dumpers/**/*_dumper.rb']
         FileUtils.rm_rf dumps_dir
       end
 
