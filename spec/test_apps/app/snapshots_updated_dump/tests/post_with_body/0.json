@@ -1,8 +1,7 @@
 {
   "request": {
     "method": "POST",
-    "url": "http://www.example.com/tests",
-    "body": "foo[bar]=bats"
+    "url": "http://www.example.com/tests"
   },
   "response": {
     "status": 204,
@@ -15,7 +14,6 @@
       "x-permitted-cross-domain-policies": "none",
       "referrer-policy": "strict-origin-when-cross-origin",
       "cache-control": "no-cache"
-    },
-    "body": ""
+    }
   }
 }

@@ -1,12 +1,10 @@
 {
   "request": {
     "method": "GET",
-    "url": "http://www.example.com/",
-    "body": ""
+    "url": "http://www.example.com/"
   },
   "response": {
     "status": 200,
-    "statusText": "OK",
-    "body": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <title>App</title>\n  </head>\n  <body>\n    <p>Hello World!</p>\n  <p>Test</p>\n\n  </body>\n</html>\n"
+    "statusText": "OK"
   }
 }
