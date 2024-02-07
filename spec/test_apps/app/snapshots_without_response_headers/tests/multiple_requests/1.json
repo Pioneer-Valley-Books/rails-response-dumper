@@ -1,12 +1,10 @@
 {
   "request": {
     "method": "DELETE",
-    "url": "http://www.example.com/tests",
-    "body": ""
+    "url": "http://www.example.com/tests"
   },
   "response": {
     "status": 204,
-    "statusText": "No Content",
-    "body": ""
+    "statusText": "No Content"
   }
 }

@@ -1,8 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "http://www.example.com/",
-    "body": ""
+    "url": "http://www.example.com/"
   },
   "response": {
     "status": 200,
@@ -18,7 +17,6 @@
       "etag": "W/\"d596f8d8528e0c873dc798bc7352f08d\"",
       "cache-control": "max-age=0, private, must-revalidate",
       "content-length": "141"
-    },
-    "body": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    <title>App</title>\n  </head>\n  <body>\n    <p>Hello World!</p>\n  <p>Test</p>\n\n  </body>\n</html>\n"
+    }
   }
 }
