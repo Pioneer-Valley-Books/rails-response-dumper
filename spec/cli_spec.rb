@@ -48,6 +48,7 @@ RSpec.describe 'CLI' do
         Root.index .
         Tests.post_with_body .
         Tests.multiple_requests .
+        Tests.multipart_formdata_request_with_file .
 
       TEXT
       expect(status.exitstatus).to eq(0)
@@ -106,10 +107,11 @@ RSpec.describe 'CLI' do
         expect(stderr).to eq('')
         expect(stdout).to eq <<~TEXT
           Randomized with seed 8
-          Tests.multiple_requests .
-          Root.index .
-          Hooks.hook .
           Books.create .
+          Root.index .
+          Tests.multipart_formdata_request_with_file .
+          Hooks.hook .
+          Tests.multiple_requests .
           Tests.post_with_body .
 
         TEXT
@@ -199,7 +201,7 @@ RSpec.describe 'CLI' do
           expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
 
           expect(stderr).to eq('')
-          expect(stdout).to eq("..\n")
+          expect(stdout).to eq("...\n")
           expect(status.exitstatus).to eq(0)
         end
       end
@@ -217,7 +219,7 @@ RSpec.describe 'CLI' do
           expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_two_files'))
 
           expect(stderr).to eq('')
-          expect(stdout).to eq("...\n")
+          expect(stdout).to eq("....\n")
           expect(status.exitstatus).to eq(0)
         end
       end
@@ -242,7 +244,7 @@ RSpec.describe 'CLI' do
           expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
 
           expect(stderr).to eq('')
-          expect(stdout).to eq("..\n")
+          expect(stdout).to eq("...\n")
           expect(status.exitstatus).to eq(0)
         end
       end
@@ -283,7 +285,7 @@ RSpec.describe 'CLI' do
       expect(status.exitstatus).to eq(0)
 
       dumps = Dir.glob("#{dumps_dir}/**/*.json")
-      expect(dumps.length).to eq(7)
+      expect(dumps.length).to eq(8)
       dumps.each do |path|
         dump = JSON.parse!(File.read(path))
         expect(dump['timestamp']).to match(/\A\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\dZ\z/)
