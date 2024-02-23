@@ -1,0 +1,7 @@
+------------XnJLe9ZIbbGUYtzPQJ16u1
+content-disposition: form-data; name="uploaded_image_file"; filename="fake_image_file.png"
+content-type: image/png
+content-length: 21
+
+png file data content
+------------XnJLe9ZIbbGUYtzPQJ16u1--

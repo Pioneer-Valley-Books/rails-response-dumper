@@ -27,7 +27,7 @@ RSpec.describe 'CLI' do
       cmd = %w[bundle exec rails-response-dumper --exclude-timestamp]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq(".....\n")
+      expect(stdout).to eq("......\n")
       expect(status.exitstatus).to eq(0)
 
       # defaults to 'dumps' directory
@@ -48,6 +48,7 @@ RSpec.describe 'CLI' do
         Root.index .
         Tests.post_with_body .
         Tests.multiple_requests .
+        Tests.multipart_formdata_request_with_file .
 
       TEXT
       expect(status.exitstatus).to eq(0)
@@ -80,7 +81,7 @@ RSpec.describe 'CLI' do
       ]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq(".....\n")
+      expect(stdout).to eq("......\n")
       expect(status.exitstatus).to eq(0)
 
       expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_without_response_headers'))
@@ -93,7 +94,7 @@ RSpec.describe 'CLI' do
         cmd = %W[bundle exec rails-response-dumper --order random --dumps-dir #{dumps_dir} --exclude-timestamp]
         stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
         expect(stderr).to eq('')
-        expect(stdout).to match(/\ARandomized with seed [1-9][0-9]*\n\.\.\.\.\.\n\z/)
+        expect(stdout).to match(/\ARandomized with seed [1-9][0-9]*\n\.\.\.\.\.\.\n\z/)
         expect(status.exitstatus).to eq(0)
         expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
       end
@@ -106,10 +107,11 @@ RSpec.describe 'CLI' do
         expect(stderr).to eq('')
         expect(stdout).to eq <<~TEXT
           Randomized with seed 8
-          Tests.multiple_requests .
-          Root.index .
-          Hooks.hook .
           Books.create .
+          Root.index .
+          Tests.multipart_formdata_request_with_file .
+          Hooks.hook .
+          Tests.multiple_requests .
           Tests.post_with_body .
 
         TEXT
@@ -138,7 +140,7 @@ RSpec.describe 'CLI' do
     cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
     stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
     expect(stderr).to eq('')
-    expect(stdout).to eq("Commit Book\n.....\n")
+    expect(stdout).to eq("Commit Book\n......\n")
     expect(status.exitstatus).to eq(0)
     expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
   end
@@ -199,7 +201,7 @@ RSpec.describe 'CLI' do
           expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
 
           expect(stderr).to eq('')
-          expect(stdout).to eq("..\n")
+          expect(stdout).to eq("...\n")
           expect(status.exitstatus).to eq(0)
         end
       end
@@ -279,11 +281,11 @@ RSpec.describe 'CLI' do
       cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq(".....\n")
+      expect(stdout).to eq("......\n")
       expect(status.exitstatus).to eq(0)
 
       dumps = Dir.glob("#{dumps_dir}/**/*.json")
-      expect(dumps.length).to eq(7)
+      expect(dumps.length).to eq(8)
       dumps.each do |path|
         dump = JSON.parse!(File.read(path))
         expect(dump['timestamp']).to match(/\A\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\dZ\z/)
