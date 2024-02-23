@@ -6,6 +6,10 @@
 - Running `rails-response-dumper` with no arguments now limits discovery to
   `*_dumper.rb` files instead of all `*.rb` files.
 
+- Add support for attaching files in ("multipart") form submissions. The
+  runner now places the request and response bodies in their own files outside
+  of the `#.json` file. 
+
 ## 6.2.0 (2023-05-31)
 
 - Add `timestamp` property to dumps. Its value is the Rails timestamp in ISO

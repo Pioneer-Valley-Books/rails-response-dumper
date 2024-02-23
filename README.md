@@ -37,17 +37,18 @@ dumps
 └── users
     └── index
         └── 0.json
+        └── 0.request_body
+        └── 0.response_body
 ```
 
-The content of each dump file is a JSON object with attributes that contain
+The content of each `#.json` dump file is a JSON object with attributes that contain
 information about the HTTP request and response. For example:
 
 ```json
 {
   "request": {
     "method": "GET",
-    "url": "http://www.example.com/test",
-    "body": ""
+    "url": "http://www.example.com/test"
   },
   "response": {
     "status": 200,
@@ -55,11 +56,36 @@ information about the HTTP request and response. For example:
     "headers": {
       "Content-Type": "text/html; charset=utf-8",
       ...
-    },
-    "body": "<p>Hello World!</p>"
+    }
   }
 }
 ```
+
+The content of `#.request_body` and `#.response_body` are simply the request and
+response body contents. For example:
+
+`#.request_body` :
+```
+foo[bar]=baz
+```
+`#.response_body` :
+```
+<p>Hello World!</p>
+```
+Or, for a "multipart/formdata" request which contains a submitted file:  
+
+`#.request_body` :
+```
+------------XnJLe9ZIbbGUYtzPQJ16u1
+content-disposition: form-data; name="uploaded_image_file"; filename="fake_image_file.png"
+content-type: image/png
+content-length: 21
+
+<file data content appears here>
+------------XnJLe9ZIbbGUYtzPQJ16u1--
+```
+> Note: request/response bodies are held in separate files because multipart forms
+> may contain binaries which cannot be safely passed through the JSON formatter.
 
 Just like tests, the dump methods can include setup code to add records to the
 database or include other side effects to build a more interesting dump. Dumps
