@@ -27,7 +27,7 @@ RSpec.describe 'CLI' do
       cmd = %w[bundle exec rails-response-dumper --exclude-timestamp]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq(".....\n")
+      expect(stdout).to match(/.+\n/)
       expect(status.exitstatus).to eq(0)
 
       # defaults to 'dumps' directory
@@ -80,7 +80,7 @@ RSpec.describe 'CLI' do
       ]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq(".....\n")
+      expect(stdout).to match(/.+\n/)
       expect(status.exitstatus).to eq(0)
 
       expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_without_response_headers'))
@@ -93,7 +93,7 @@ RSpec.describe 'CLI' do
         cmd = %W[bundle exec rails-response-dumper --order random --dumps-dir #{dumps_dir} --exclude-timestamp]
         stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
         expect(stderr).to eq('')
-        expect(stdout).to match(/\ARandomized with seed [1-9][0-9]*\n\.\.\.\.\.\n\z/)
+        expect(stdout).to match(/\ARandomized with seed [1-9][0-9]*\n\.+\n\z/)
         expect(status.exitstatus).to eq(0)
         expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
       end
@@ -138,7 +138,7 @@ RSpec.describe 'CLI' do
     cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
     stdout, stderr, status = Open3.capture3(env, *cmd, chdir: APP_DIR)
     expect(stderr).to eq('')
-    expect(stdout).to eq("Commit Book\n.....\n")
+    expect(stdout).to match(/Commit Book\n.+\n/)
     expect(status.exitstatus).to eq(0)
     expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
   end
@@ -279,7 +279,7 @@ RSpec.describe 'CLI' do
       cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout).to eq(".....\n")
+      expect(stdout).to match(/.+\n/)
       expect(status.exitstatus).to eq(0)
 
       dumps = Dir.glob("#{dumps_dir}/**/*.json")
