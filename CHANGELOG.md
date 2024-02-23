@@ -6,6 +6,9 @@
 - Running `rails-response-dumper` with no arguments now limits discovery to
   `*_dumper.rb` files instead of all `*.rb` files.
 
+- Tweak tests on `stdout` so they don't count '.'s, but rather expect any nonzero
+  number of them, so they don't need to be updated with every new test dumper.
+
 ## 6.2.0 (2023-05-31)
 
 - Add `timestamp` property to dumps. Its value is the Rails timestamp in ISO
