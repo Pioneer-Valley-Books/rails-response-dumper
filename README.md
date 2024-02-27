@@ -61,31 +61,37 @@ information about the HTTP request and response. For example:
 }
 ```
 
-The content of `#.request_body` and `#.response_body` are simply the request and
+The content of `#.request_body` and `#.response_body` are the request and
 response body contents. For example:
 
 `#.request_body` :
+
 ```
 foo[bar]=baz
 ```
+
 `#.response_body` :
+
 ```
 <p>Hello World!</p>
 ```
-Or, for a "multipart/formdata" request which contains a submitted file:  
+
+Or, for a multipart/form-data request which contains a submitted file:  
 
 `#.request_body` :
+
 ```
 ------------XnJLe9ZIbbGUYtzPQJ16u1
-content-disposition: form-data; name="uploaded_image_file"; filename="fake_image_file.png"
+content-disposition: form-data; name="file"; filename="image.png"
 content-type: image/png
 content-length: 21
 
 <file data content appears here>
 ------------XnJLe9ZIbbGUYtzPQJ16u1--
 ```
-> Note: request/response bodies are held in separate files because multipart forms
-> may contain binaries which cannot be safely passed through the JSON formatter.
+
+Request and response bodies are held in separate files because multipart forms
+may contain binaries which cannot be safely passed through the JSON formatter.
 
 Just like tests, the dump methods can include setup code to add records to the
 database or include other side effects to build a more interesting dump. Dumps

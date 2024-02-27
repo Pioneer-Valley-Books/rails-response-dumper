@@ -6,7 +6,7 @@
 - Running `rails-response-dumper` with no arguments now limits discovery to
   `*_dumper.rb` files instead of all `*.rb` files.
 
-- Add support for attaching files in ("multipart") form submissions. The
+- Add support for attaching files in multipart/form-data requests. The
   runner now places the request and response bodies in their own files outside
   of the `#.json` file. 
 
