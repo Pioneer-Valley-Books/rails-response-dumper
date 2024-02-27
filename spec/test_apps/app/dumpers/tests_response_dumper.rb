@@ -19,8 +19,6 @@ ResponseDumper.define 'Tests' do
       original_filename: 'fake_image_file.png'
     )
 
-    post url_for(controller: :tests, action: :submit_image), params: {
-      uploaded_image_file: mocked_image_file
-    }
+    post url_for(controller: :tests, action: :submit_image), params: { uploaded_image_file: mocked_image_file }
   end
 end
