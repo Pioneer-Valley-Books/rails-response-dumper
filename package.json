@@ -1,0 +1,7 @@
+{
+  "name": "rails-response-dumper",
+  "private": true,
+  "dependencies": {
+    "prettier": "^3.2.5"
+  }
+}
