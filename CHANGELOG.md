@@ -1,4 +1,4 @@
-## UNRELEASED
+## 7.0.0 (2024-02-29)
 
 - Add the `--profile` CLI option. This option will print the names of the 10
   slowest dumps and their time from the run.
