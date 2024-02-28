@@ -1,12 +1,10 @@
 {
   "request": {
     "method": "POST",
-    "url": "http://www.example.com/tests",
-    "body": "{\"foo\":{\"bar\":\"baz\"}}"
+    "url": "http://www.example.com/tests"
   },
   "response": {
     "status": 204,
-    "statusText": "No Content",
-    "body": ""
+    "statusText": "No Content"
   }
 }

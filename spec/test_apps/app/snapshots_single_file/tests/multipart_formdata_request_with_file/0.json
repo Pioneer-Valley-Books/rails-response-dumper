@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "http://www.example.com/tests/submit_image"
+  },
+  "response": {
+    "status": 204,
+    "statusText": "No Content",
+    "headers": {
+      "x-frame-options": "SAMEORIGIN",
+      "x-xss-protection": "0",
+      "x-content-type-options": "nosniff",
+      "x-download-options": "noopen",
+      "x-permitted-cross-domain-policies": "none",
+      "referrer-policy": "strict-origin-when-cross-origin",
+      "cache-control": "no-cache"
+    }
+  }
+}

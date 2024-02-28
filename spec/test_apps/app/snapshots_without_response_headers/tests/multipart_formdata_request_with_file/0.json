@@ -1,0 +1,10 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "http://www.example.com/tests/submit_image"
+  },
+  "response": {
+    "status": 204,
+    "statusText": "No Content"
+  }
+}
