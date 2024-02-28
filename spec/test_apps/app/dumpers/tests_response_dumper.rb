@@ -16,9 +16,9 @@ ResponseDumper.define 'Tests' do
       StringIO.new("\x89\x50\x4E\x47\x0D\x0A\x1A\x0A\x00\x00\x00\x0d\x49\x48\x44\x52\x00\x00\x00\x02\x00\x00\x00\x01"),
       'image/png',
       true,
-      original_filename: 'fake_image_file.png'
+      original_filename: 'image.png'
     )
 
-    post url_for(controller: :tests, action: :submit_image), params: { uploaded_image_file: mocked_image_file }
+    post url_for(controller: :tests, action: :submit_image), params: { file: mocked_image_file }
   end
 end
