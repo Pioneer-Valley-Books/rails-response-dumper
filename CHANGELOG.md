@@ -8,7 +8,7 @@
 
 - Add support for attaching files in multipart/form-data requests. The
   runner now places the request and response bodies in their own files outside
-  of the `#.json` file. 
+  of the `#.json` file.
 
 ## 6.2.0 (2023-05-31)
 
@@ -24,10 +24,10 @@
 ## 6.0.0 (2023-04-27)
 
 - Add `--dumps-dir` CLI option. This option allows the user to specify a
-directory to which the dumps are saved.
+  directory to which the dumps are saved.
 
-- Add `--exclude-response-headers` CLI option.  This option will suppress response
-headers from the dumper output.
+- Add `--exclude-response-headers` CLI option. This option will suppress response
+  headers from the dumper output.
 
 - The dump property `response.status_text` was renamed to `response.statusText`
   to match the JavaScript `Response` constructor.
@@ -36,16 +36,16 @@ headers from the dumper output.
 
 ## 5.3.0 (2023-03-07)
 
-- Add `--verbose` CLI option.  This option will print the dumper and block names.
-e.g. `bundle exec rails-response-dumper --verbose`.
+- Add `--verbose` CLI option. This option will print the dumper and block names.
+  e.g. `bundle exec rails-response-dumper --verbose`.
 
-- Add --order CLI option.  `--order random` will run the dumps in a random
-order. If given a seed value e.g. `--order 8` it will initialize the pseudo
-random number generator with the provided seed value to run the dumps in a
-reproducible order.
+- Add --order CLI option. `--order random` will run the dumps in a random
+  order. If given a seed value e.g. `--order 8` it will initialize the pseudo
+  random number generator with the provided seed value to run the dumps in a
+  reproducible order.
 
 - Fix `--fail-fast` CLI flag. Abort dumps for all remaining dumpers,
-and not just the dumps of the current dumper in the loop.
+  and not just the dumps of the current dumper in the loop.
 
 ## 5.2.0 (2023-01-24)
 
@@ -59,27 +59,27 @@ and not just the dumps of the current dumper in the loop.
 
 - Colorize CLI output for TTY environments.
 
--  The request body and the response status text are now included in the dump.
-   The new format looks like:
+- The request body and the response status text are now included in the dump.
+  The new format looks like:
 
-  ```json
-  {
-    "request": {
-      "method": "GET",
-      "url": "http://www.example.com/test",
-      "body": ""
+```json
+{
+  "request": {
+    "method": "GET",
+    "url": "http://www.example.com/test",
+    "body": ""
+  },
+  "response": {
+    "status": 200,
+    "status_text": "OK",
+    "headers": {
+      "Content-Type": "text/html; charset=utf-8",
+      ...
     },
-    "response": {
-      "status": 200,
-      "status_text": "OK",
-      "headers": {
-        "Content-Type": "text/html; charset=utf-8",
-        ...
-      },
-      "body": "..."
-    }
+    "body": "..."
   }
-  ```
+}
+```
 
 ## 5.0.0 (2022-12-05)
 
@@ -160,7 +160,7 @@ and not just the dumps of the current dumper in the loop.
 - Add mime/types as a dependency.
 
 - The rspec-mocks dependency now requires version `~> 3.0` (or `>= 3.0, <
-  4.0`).
+4.0`).
 
 ## 2.1.0 (2022-03-03)
 

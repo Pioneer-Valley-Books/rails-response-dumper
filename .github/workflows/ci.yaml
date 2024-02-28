@@ -5,6 +5,20 @@ on:
   - pull_request
 
 jobs:
+  prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          cache: npm
+
+      - name: Prettier
+        run: npx prettier --check .
+
   rubocop:
     runs-on: ubuntu-latest
 
