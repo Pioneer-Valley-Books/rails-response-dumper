@@ -78,7 +78,7 @@ foo[bar]=baz
 
 Or, for a multipart/form-data request which contains a submitted file:  
 
-`#.request_body` :
+`#.request_body` (binary) :
 
 ```
 ------------XnJLe9ZIbbGUYtzPQJ16u1
