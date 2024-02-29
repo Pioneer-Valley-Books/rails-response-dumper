@@ -2,6 +2,7 @@
 
 source 'https://rubygems.org'
 
+gem 'rack', '>= 3', group: [:development]
 gem 'rspec', group: [:development]
 gem 'rubocop', group: [:development]
 gem 'rubocop-performance', group: [:development]
