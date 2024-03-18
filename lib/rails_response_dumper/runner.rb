@@ -102,8 +102,8 @@ module RailsResponseDumper
 
             dump = {
               request: {
-                method: request.method,
-                url: request.url
+                url: request.url,
+                env: request.headers.to_h
               },
               response: {
                 status: response.status,
@@ -111,6 +111,12 @@ module RailsResponseDumper
                 headers: response.headers
               }
             }
+
+            # request.headers includes nonstandard internal data, some of which also lacks default deterministic
+            # serialization. Here we only want CGI standard and HTTP variables.
+            dump[:request][:env].delete_if do |key, _|
+              !(key.in?(ActionDispatch::Http::Headers::CGI_VARIABLES) || key =~ /^HTTP_/)
+            end
 
             dump[:response].delete(:headers) if options[:exclude_response_headers]
 

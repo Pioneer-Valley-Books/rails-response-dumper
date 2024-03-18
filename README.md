@@ -47,8 +47,11 @@ information about the HTTP request and response. For example:
 ```json
 {
   "request": {
-    "method": "GET",
-    "url": "http://www.example.com/test"
+    "url": "http://www.example.com/test",
+    "env": {
+      "REQUEST_METHOD": "GET",
+      ...
+    }
   },
   "response": {
     "status": 200,
