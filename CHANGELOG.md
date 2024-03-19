@@ -1,6 +1,8 @@
-## UNRELEASED
+## 8.0.0 (2024-03-19)
 
 - Include CGI/HTTP request Rack environment variables in the JSON dump.
+
+- The field `request.method` is no longer in the JSON dump.
 
 ## 7.0.0 (2024-02-29)
 
