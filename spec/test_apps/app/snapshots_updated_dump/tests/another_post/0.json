@@ -1,7 +1,22 @@
 {
   "request": {
-    "method": "POST",
-    "url": "http://www.example.com/tests"
+    "url": "http://www.example.com/tests",
+    "env": {
+      "REQUEST_METHOD": "POST",
+      "SERVER_NAME": "www.example.com",
+      "SERVER_PORT": "80",
+      "SERVER_PROTOCOL": "HTTP/1.0",
+      "QUERY_STRING": "",
+      "PATH_INFO": "/tests",
+      "HTTPS": "off",
+      "SCRIPT_NAME": "",
+      "CONTENT_LENGTH": "13",
+      "REMOTE_ADDR": "127.0.0.1",
+      "HTTP_HOST": "www.example.com",
+      "HTTP_ACCEPT": "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
+      "CONTENT_TYPE": "application/x-www-form-urlencoded",
+      "HTTP_COOKIE": ""
+    }
   },
   "response": {
     "status": 204,
