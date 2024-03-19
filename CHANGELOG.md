@@ -1,6 +1,6 @@
 ## UNRELEASED
 
-- Include CGI/HTTP request rack environment variables in the JSON dump.
+- Include CGI/HTTP request Rack environment variables in the JSON dump.
 
 ## 7.0.0 (2024-02-29)
 
