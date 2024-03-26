@@ -1,4 +1,4 @@
-## UNRELEASED
+## 9.0.0 (2024-03-26)
 
 - Allow the application to load Rails configuration.
 
