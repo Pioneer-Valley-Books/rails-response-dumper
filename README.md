@@ -13,9 +13,17 @@ $ bundle add rails-response-dumper --group=development,test
 ## Usage
 
 Add the `dumpers` directory to the root of your Rails application. In this
-directory, define classes that extend `ResponseDumper`. Each method that starts
-with `dump_` will generate a dump file in the `dumps` directory. Rails path
-methods are available.
+directory, create the file `dumpers_helper.rb` that loads the Rails
+environment.
+
+```ruby
+ENV['RAILS_ENV'] ||= 'test'
+require_relative '../config/environment'
+```
+
+Next, define classes that extend `ResponseDumper`. Each method that starts with
+`dump_` will generate a dump file in the `dumps` directory. Rails path methods
+are available.
 
 ```ruby
 # dumpers/users_response_dumper.rb

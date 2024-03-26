@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-ENV['RAILS_ENV'] ||= 'test'
 require 'rails_response_dumper'
+require "#{Dir.pwd}/dumpers/dumpers_helper"
+require 'response_dumper'
 
 # Prevent database truncation if the environment is production.
 abort 'The Rails environment is running in production mode!' if Rails.env.production?
