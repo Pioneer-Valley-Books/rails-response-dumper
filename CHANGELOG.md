@@ -1,3 +1,7 @@
+## UNRELEASED
+
+- Allow the application to load Rails configuration.
+
 ## 8.0.0 (2024-03-19)
 
 - Include CGI/HTTP request Rack environment variables in the JSON dump.
