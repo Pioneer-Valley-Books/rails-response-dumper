@@ -121,8 +121,12 @@ RSpec.describe 'CLI' do
     end
   end
 
-  it 'runs after hook when an exception is raised' do
-    env = { 'TMPDIR' => tmpdir, 'FILENAME' => 'test.out' }
+  it 'runs after and after_all hook when an exception is raised' do
+    env = {
+      'TMPDIR' => tmpdir,
+      'AFTER_FILENAME' => 'test_after.out',
+      'AFTER_ALL_FILENAME' => 'test_after_all.out'
+    }
     cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
     stdout, stderr, status = Open3.capture3(env, *cmd, chdir: AFTER_HOOK_APP_DIR)
     expect(stderr).to eq('')
@@ -132,7 +136,8 @@ RSpec.describe 'CLI' do
       #{AFTER_HOOK_APP_DIR}/dumpers/after_hook_dumper.rb:9:in `block (2 levels) in <top (required)>': after hook error (RuntimeError)
     ERR
     expect(status.exitstatus).to eq(1)
-    expect(File.exist?("#{tmpdir}/#{env.fetch('FILENAME')}")).to eq(true)
+    expect(File.exist?("#{tmpdir}/#{env.fetch('AFTER_FILENAME')}")).to eq(true)
+    expect(File.exist?("#{tmpdir}/#{env.fetch('AFTER_ALL_FILENAME')}")).to eq(true)
   end
 
   it 'executes model after_commit hooks' do
@@ -156,15 +161,15 @@ RSpec.describe 'CLI' do
       expect(stdout.lines[0]).to eq("FFF\n")
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:95:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:100:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
       ERR
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:8 #{invalid_number_of_statuses} received 2 responses (expected 1)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:83:in `block (2 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:88:in `block (2 levels) in run_dumps': 2 responses (expected 1) (RuntimeError)
       ERR
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_other_dumper.rb:4 #{dumper_2_invalid_status_code} received unexpected status code 200 OK (expected 404)
-        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:95:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+        #{Dir.getwd}/lib/rails_response_dumper/runner.rb:100:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
       ERR
       expect(status.exitstatus).to eq(1)
     end
@@ -177,7 +182,7 @@ RSpec.describe 'CLI' do
         expect(stdout.lines[0]).to eq("F\n")
         expect(stdout).to include <<~ERR
           #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
-          #{Dir.getwd}/lib/rails_response_dumper/runner.rb:95:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+          #{Dir.getwd}/lib/rails_response_dumper/runner.rb:100:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
         ERR
         expect(stdout).not_to include(invalid_number_of_statuses)
         expect(stdout).not_to include(dumper_2_invalid_status_code)

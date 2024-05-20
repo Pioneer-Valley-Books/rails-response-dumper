@@ -5,7 +5,7 @@ require_relative 'dump_block'
 
 module RailsResponseDumper
   class Defined
-    attr_accessor :name, :klass
+    attr_accessor :name, :klass, :config
     attr_reader :before_block, :after_block
 
     delegate :include, to: :klass
@@ -14,9 +14,10 @@ module RailsResponseDumper
       @dumpers ||= []
     end
 
-    def initialize(name, &block)
+    def initialize(name, config, &block)
       self.name = name
       self.klass = Class.new(ResponseDumper)
+      self.config = config
 
       instance_eval(&block)
 

@@ -2,7 +2,7 @@
 
 ResponseDumper.define 'after_hook' do
   after do
-    FileUtils.touch("#{ENV.fetch('TMPDIR')}/#{ENV.fetch('FILENAME')}")
+    FileUtils.touch("#{ENV.fetch('TMPDIR')}/#{ENV.fetch('AFTER_FILENAME')}")
   end
 
   dump 'after_hook' do

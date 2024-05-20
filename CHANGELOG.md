@@ -1,3 +1,7 @@
+## 9.1.0 (2024-05-20)
+
+- Add support for before_all/after_all hook.
+
 ## 9.0.0 (2024-03-26)
 
 - Allow the application to load Rails configuration.

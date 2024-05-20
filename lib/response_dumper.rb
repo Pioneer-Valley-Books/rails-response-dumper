@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'rspec/mocks'
+require_relative 'response_dumper_configure'
 
 class ResponseDumper
   include ActionDispatch::Integration::Runner
@@ -8,7 +9,12 @@ class ResponseDumper
   include RSpec::Mocks::ExampleMethods
 
   def self.define(name, &block)
-    RailsResponseDumper::Defined.new(name, &block)
+    RailsResponseDumper::Defined.new(name, @config, &block)
+  end
+
+  def self.configure
+    @config = ResponseDumperConfigure.new
+    yield @config
   end
 
   # Delegates to `Rails.application`.

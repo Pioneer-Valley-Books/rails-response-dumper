@@ -9,6 +9,9 @@ module RailsResponseDumper
 
     def initialize(options)
       @options = options
+
+      filename = "#{Dir.pwd}/dumpers/response_dumper_config.rb"
+      require_relative filename if File.file?(filename)
     end
 
     def run_dumps
@@ -67,11 +70,13 @@ module RailsResponseDumper
           begin
             rollback_after do
               t0 = Time.now
+              defined.config&.before_all_block&.call
               dumper.instance_eval(&defined.before_block) if defined.before_block
               begin
                 dumper.instance_eval(&dump_block.block)
               ensure
                 dumper.instance_eval(&defined.after_block) if defined.after_block
+                defined.config&.after_all_block&.call
               end
               profile[name] = Time.now - t0
             end
