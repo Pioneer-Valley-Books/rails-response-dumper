@@ -10,7 +10,6 @@
       "PATH_INFO": "/",
       "HTTPS": "off",
       "SCRIPT_NAME": "",
-      "CONTENT_LENGTH": "0",
       "REMOTE_ADDR": "127.0.0.1",
       "HTTP_HOST": "www.example.com",
       "HTTP_ACCEPT": "text/xml,application/xml,application/xhtml+xml,text/html;q=0.9,text/plain;q=0.8,image/png,*/*;q=0.5",
