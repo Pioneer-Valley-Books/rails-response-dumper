@@ -132,7 +132,7 @@ RSpec.describe 'CLI' do
       #{AFTER_HOOK_APP_DIR}/dumpers/after_hook_dumper.rb:9:in `block (2 levels) in <top (required)>': after hook error (RuntimeError)
     ERR
     expect(status.exitstatus).to eq(1)
-    expect(File.exist?("#{tmpdir}/#{env.fetch('FILENAME')}")).to eq(true)
+    expect(File.exist?("#{tmpdir}/#{env.fetch('FILENAME')}")).to be(true)
   end
 
   it 'executes model after_commit hooks' do
