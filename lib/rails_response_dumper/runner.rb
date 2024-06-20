@@ -123,7 +123,7 @@ module RailsResponseDumper
             dump[:timestamp] = timestamp.iso8601 unless options[:exclude_timestamp]
 
             File.write("#{dumper_dir}/#{index}.json", JSON.pretty_generate(dump))
-            File.write("#{dumper_dir}/#{index}.request_body", request.body.string, mode: 'wb')
+            File.write("#{dumper_dir}/#{index}.request_body", request.body&.string, mode: 'wb')
             File.write("#{dumper_dir}/#{index}.response_body", response.body, mode: 'wb')
           end
 
