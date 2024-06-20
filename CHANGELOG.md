@@ -1,3 +1,7 @@
+## UNRELEASED
+
+- Make compatible with Rack 3.1 and an omitted `rack.input` value.
+
 ## 9.0.0 (2024-03-26)
 
 - Allow the application to load Rails configuration.
