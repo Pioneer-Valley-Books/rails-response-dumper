@@ -1,3 +1,7 @@
+## 9.2.0 (2024-11-13)
+
+Add support for Rails 8.
+
 ## 9.1.0 (2024-06-20)
 
 - Make compatible with Rack 3.1 and an omitted `rack.input` value.
