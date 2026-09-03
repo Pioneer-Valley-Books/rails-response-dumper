@@ -1,3 +1,8 @@
+## 9.3.0 (2026-09-03)
+
+- Dumps now fail with an error if they write to a file that already exists,
+  for example when two dumps share a name.
+
 ## 9.2.0 (2024-11-13)
 
 Add support for Rails 8.
