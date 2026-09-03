@@ -153,7 +153,7 @@ RSpec.describe 'CLI' do
       cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
       stdout, stderr, status = Open3.capture3(*cmd, chdir: FAIL_APP_DIR)
       expect(stderr).to eq('')
-      expect(stdout.lines[0]).to eq("FFF\n")
+      expect(stdout.lines[0]).to eq("FF.FF\n")
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_dumper.rb:4 fail_app.invalid_status_code received unexpected status code 200 OK (expected 404)
         #{Dir.getwd}/lib/rails_response_dumper/runner.rb:95:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
@@ -165,6 +165,9 @@ RSpec.describe 'CLI' do
       expect(stdout).to include <<~ERR
         #{FAIL_APP_DIR}/dumpers/fail_app_other_dumper.rb:4 #{dumper_2_invalid_status_code} received unexpected status code 200 OK (expected 404)
         #{Dir.getwd}/lib/rails_response_dumper/runner.rb:95:in `block (3 levels) in run_dumps': unexpected status code 200 OK (expected 404) (RuntimeError)
+      ERR
+      expect(stdout).to include <<~ERR
+        #{FAIL_APP_DIR}/dumpers/fail_app_duplicate_dumper.rb:9 fail_app_duplicate.duplicate received File exists @ rb_sysopen - #{dumps_dir}/fail_app_duplicate/duplicate/0.json
       ERR
       expect(status.exitstatus).to eq(1)
     end
