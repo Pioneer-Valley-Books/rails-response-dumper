@@ -27,6 +27,7 @@
       "x-permitted-cross-domain-policies": "none",
       "referrer-policy": "strict-origin-when-cross-origin",
       "content-type": "text/html; charset=utf-8",
+      "vary": "Accept, X-Requested-With",
       "etag": "W/\"1c80359a742d7373dc4561d5d1807c11\"",
       "cache-control": "max-age=0, private, must-revalidate",
       "content-length": "127"
