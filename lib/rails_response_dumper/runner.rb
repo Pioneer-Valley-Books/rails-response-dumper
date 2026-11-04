@@ -18,7 +18,7 @@ module RailsResponseDumper
         globs = options[:filenames]
       else
         globs = ['dumpers/**/*_dumper.rb']
-        FileUtils.rm_rf dumps_dir
+        FileUtils.rm_rf dumps_dir unless options[:skip_delete]
       end
 
       FileUtils.mkdir_p dumps_dir
@@ -30,7 +30,7 @@ module RailsResponseDumper
       errors = []
 
       dumper_blocks = RailsResponseDumper::Defined.dumpers.flat_map do |defined|
-        if options[:filenames].present?
+        if options[:filenames].present? && !options[:skip_delete]
           # clear previous dumps for that file in case removed from updated dump file
           FileUtils.rm_rf "#{dumps_dir}/#{defined.name.underscore}/"
         end

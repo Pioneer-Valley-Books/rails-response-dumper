@@ -21,6 +21,10 @@ module RailsResponseDumper
         options['dumps-dir'] = v
       end
 
+      opts.on('--skip-delete', 'Do not delete existing dumps before running.') do |v|
+        options[:skip_delete] = v
+      end
+
       opts.on('--fail-fast', 'Abort the run after first failure.') do |v|
         options[:fail_fast] = v
       end

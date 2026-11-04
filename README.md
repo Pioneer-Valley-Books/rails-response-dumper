@@ -117,6 +117,18 @@ the `rails-response-dumper` command as follows:
 $ rails-response-dumper path/to/a/file.rb
 ```
 
+### Keeping Existing Dumps
+
+Before running, Rails Response Dumper deletes the dumps directory. When run for
+specific files, it instead deletes the existing dumps for only those dumpers.
+To skip this delete operation, pass `--skip-delete`.
+
+```console
+$ rails-response-dumper --skip-delete
+```
+
+A dump that writes to a file that already exists still fails with an error.
+
 ### HTTP Status Codes
 
 By default, Rails Response Dumper will raise an exception if the response does

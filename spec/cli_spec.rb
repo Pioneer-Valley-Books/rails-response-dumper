@@ -279,6 +279,72 @@ RSpec.describe 'CLI' do
     end
   end
 
+  context 'with --skip-delete argument' do
+    let(:extra_file) { "#{dumps_dir}/extra/extra.json" }
+
+    before do
+      FileUtils.mkdir_p File.dirname(extra_file)
+      File.write(extra_file, '{}')
+    end
+
+    it 'does not delete existing files in the dumps directory' do
+      cmd = %W[bundle exec rails-response-dumper --skip-delete --dumps-dir #{dumps_dir} --exclude-timestamp]
+      stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+      expect(stderr).to eq('')
+      expect(stdout).to match(/\A.+\n\z/)
+      expect(status.exitstatus).to eq(0)
+
+      expect(File.read(extra_file)).to eq('{}')
+      FileUtils.rm_rf File.dirname(extra_file)
+      expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots'))
+    end
+
+    it 'deletes existing files in the dumps directory without the argument' do
+      cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
+      _stdout, _stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+      expect(status.exitstatus).to eq(0)
+
+      expect(File.exist?(extra_file)).to be(false)
+    end
+
+    context 'with filename argument' do
+      let(:extra_file) { "#{dumps_dir}/tests/removed/0.json" }
+
+      it 'does not delete existing dumps for that file' do
+        cmd = %W[
+          bundle exec rails-response-dumper
+          --skip-delete
+          --dumps-dir #{dumps_dir}
+          --exclude-timestamp
+          dumpers/tests_response_dumper.rb
+        ]
+        stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+        expect(stderr).to eq('')
+        expect(stdout).to eq("...\n")
+        expect(status.exitstatus).to eq(0)
+
+        expect(File.read(extra_file)).to eq('{}')
+        FileUtils.rm_rf File.dirname(extra_file)
+        expect(dumps_dir).to match_snapshots(File.join(APP_DIR, 'snapshots_single_file'))
+      end
+    end
+
+    context 'with previous dumps' do
+      before do
+        cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir} --exclude-timestamp]
+        Open3.capture3(*cmd, chdir: APP_DIR)
+      end
+
+      it 'fails when a dump writes to a file that already exists' do
+        cmd = %W[bundle exec rails-response-dumper --skip-delete --dumps-dir #{dumps_dir} --exclude-timestamp]
+        stdout, stderr, status = Open3.capture3(*cmd, chdir: APP_DIR)
+        expect(stderr).to eq('')
+        expect(stdout).to include("File exists @ rb_sysopen - #{dumps_dir}/root/index/0.json")
+        expect(status.exitstatus).to eq(1)
+      end
+    end
+  end
+
   context 'without the --exclude-timestamp argument' do
     it 'includes a ISO 8601 timestamp in each dump' do
       cmd = %W[bundle exec rails-response-dumper --dumps-dir #{dumps_dir}]
