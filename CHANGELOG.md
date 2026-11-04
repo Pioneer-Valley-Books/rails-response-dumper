@@ -1,3 +1,9 @@
+## 9.4.0 (2026-11-04)
+
+- Add the `--skip-delete` CLI option. This option skips deleting existing dumps
+  before running. Dumps still fail with an error if they write to a file that
+  already exists.
+
 ## 9.3.0 (2026-09-03)
 
 - Dumps now fail with an error if they write to a file that already exists,
