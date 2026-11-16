@@ -1,3 +1,11 @@
+## 10.0.0 (2026-11-13)
+
+- `reset_models` now restarts the sequences with `setval` instead of
+  `TRUNCATE`. It restarts the same sequences as `TRUNCATE ... RESTART IDENTITY
+CASCADE`, including those of tables that reference the models, but rows are
+  no longer removed. Tables reset by `reset_models` must be empty outside of
+  the dump transaction.
+
 ## 9.4.0 (2026-11-04)
 
 - Add the `--skip-delete` CLI option. This option skips deleting existing dumps
